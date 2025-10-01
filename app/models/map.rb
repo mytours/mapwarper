@@ -3,6 +3,11 @@ require "error_calculator"
 require 'csv'
 include ErrorCalculator
 class Map < ActiveRecord::Base
+
+  NON_FATAL_GDAL_WARNING_PATTERNS = [
+    /Warning 1: INIT_DEST was set to NO_DATA, but a NoData value was not defined/i,
+    /\A\[\]\z/
+  ].freeze
   
   has_many :gcps,  :dependent => :destroy
   has_many :layers_maps,  :dependent => :destroy
@@ -712,7 +717,13 @@ class Map < ActiveRecord::Base
     w_stdout, w_stderr = Open3.capture3( *command )
     
     w_out = w_stdout
-    w_err = w_stderr
+    if non_fatal_gdal_warning?(w_stderr)
+      logger.warn "GDAL warp warning: #{w_stderr.strip}"
+      w_err = ""
+    else
+      w_err = w_stderr
+    end
+
     if !w_err.blank?
       logger.error "Error gdal warp script" + w_err
       logger.error "output = "+w_out
@@ -728,7 +739,12 @@ class Map < ActiveRecord::Base
     logger.info command
     
     o_out = o_stdout
-    o_err = o_stderr
+    if non_fatal_gdal_warning?(o_stderr)
+      logger.warn "GDAL overview warning: #{o_stderr.strip}"
+      o_err = ""
+    else
+      o_err = o_stderr
+    end
     if !o_err.blank? 
       logger.error "Error gdal overview script" + o_err
       logger.error "output = "+o_out
@@ -1000,6 +1016,17 @@ class Map < ActiveRecord::Base
 
 
       return o_out
+    end
+  end
+
+  def non_fatal_gdal_warning?(output)
+    return false if output.blank?
+
+    messages = output.to_s.lines.map(&:strip).reject(&:blank?)
+    return false if messages.empty?
+
+    messages.all? do |line|
+      NON_FATAL_GDAL_WARNING_PATTERNS.any? { |pattern| pattern.match?(line) }
     end
   end
   
