@@ -1,0 +1,26 @@
+services:
+  db:
+    image: postgis/postgis:13-3.3
+    container_name: mapwarper-db
+    restart: unless-stopped
+    env_file:
+      - .env.postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./docker/postgres/initdb:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - mapwarper
+
+networks:
+  mapwarper:
+    driver: bridge
+
+volumes:
+  postgres-data:

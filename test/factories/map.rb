@@ -82,6 +82,13 @@ FactoryGirl.define do
     status :warped
     bbox_geom  RGeo::Cartesian::factory.parse_wkt("POLYGON ((26.64563925009777 58.341507605975615, 26.825994866513525 58.341507605975615, 26.825994866513525 58.4058083040021, 26.64563925009777 58.4058083040021, 26.64563925009777 58.341507605975615))")
     bbox  "26.64563925009777,58.341507605975615,26.825994866513525,58.4058083040021"
+
+    after(:create) do |map|
+      source_fixture = Rails.root.join('test', 'fixtures', 'data', 'dst', '136.tif')
+      destination = map.warped_filename
+      FileUtils.mkdir_p(File.dirname(destination))
+      FileUtils.cp(source_fixture, destination) unless File.exist?(destination)
+    end
   end
  
   #Layer / Mosaic
