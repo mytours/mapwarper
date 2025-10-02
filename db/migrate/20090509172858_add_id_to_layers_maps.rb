@@ -4,6 +4,6 @@ class AddIdToLayersMaps < ActiveRecord::Migration
   end
 
   def self.down
-     remove_column :layers_maps, :id
+    remove_column :layers_maps, :id
   end
 end

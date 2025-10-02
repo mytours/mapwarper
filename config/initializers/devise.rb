@@ -11,7 +11,7 @@ Devise.setup do |config|
   # note that it will be overwritten if you use your own mailer class
   # with default "from" parameter.
   # mapwarper - this is defined by config/application_config.rb  with config/application.yml
-  #config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
+  # config.mailer_sender = 'please-change-me-at-config-initializers-devise@example.com'
 
   # Configure the class responsible to send e-mails.
   # config.mailer = 'Devise::Mailer'
@@ -42,12 +42,12 @@ Devise.setup do |config|
   # Configure which authentication keys should be case-insensitive.
   # These keys will be downcased upon creating or modifying a user and when used
   # to authenticate or find a user. Default is :email.
-  config.case_insensitive_keys = [ :email ]
+  config.case_insensitive_keys = [:email]
 
   # Configure which authentication keys should have whitespace stripped.
   # These keys will have whitespace before and after removed upon creating or
   # modifying a user and when used to authenticate or find a user. Default is :email.
-  config.strip_whitespace_keys = [ :email ]
+  config.strip_whitespace_keys = [:email]
 
   # Tell if authentication through request.params is enabled. True by default.
   # It can be set to an array that will enable params authentication only for the
@@ -98,7 +98,7 @@ Devise.setup do |config|
   config.stretches = Rails.env.test? ? 1 : 11
 
   # Setup a pepper to generate the encrypted password.
-  #config.pepper = ''
+  # config.pepper = ''
 
   # ==> Configuration for :confirmable
   # A period that the user is allowed to access the website even without
@@ -232,16 +232,18 @@ Devise.setup do |config|
   # Add a new OmniAuth provider. Check the wiki for more information on setting
   # up on your models and hooks.
   # config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
-  config.omniauth :twitter,  APP_CONFIG["omniauth_twitter_key"], APP_CONFIG["omniauth_twitter_secret"]
-  
-  config.omniauth :osm_oauth2, APP_CONFIG["omniauth_osm_oauth2_key"], APP_CONFIG["omniauth_osm_oauth2_secret"], { :scope => "read_prefs", :client_options => {:site => "https://www.openstreetmap.org"}}
-  
-  config.omniauth :mediawiki,  APP_CONFIG["omniauth_mediawiki_key"], APP_CONFIG["omniauth_mediawiki_secret"], {:client_options => {:site => APP_CONFIG["omniauth_mediawiki_site"] }}
-  
-  config.omniauth :github, APP_CONFIG["omniauth_github_key"], APP_CONFIG["omniauth_github_secret"]
+  config.omniauth :twitter, APP_CONFIG['omniauth_twitter_key'], APP_CONFIG['omniauth_twitter_secret']
 
-  config.omniauth :facebook, APP_CONFIG["omniauth_facebook_key"], APP_CONFIG["omniauth_facebook_secret"]
-  
+  config.omniauth :osm_oauth2, APP_CONFIG['omniauth_osm_oauth2_key'], APP_CONFIG['omniauth_osm_oauth2_secret'],
+                  { scope: 'read_prefs', client_options: { site: 'https://www.openstreetmap.org' } }
+
+  config.omniauth :mediawiki,  APP_CONFIG['omniauth_mediawiki_key'], APP_CONFIG['omniauth_mediawiki_secret'],
+                  { client_options: { site: APP_CONFIG['omniauth_mediawiki_site'] } }
+
+  config.omniauth :github, APP_CONFIG['omniauth_github_key'], APP_CONFIG['omniauth_github_secret']
+
+  config.omniauth :facebook, APP_CONFIG['omniauth_facebook_key'], APP_CONFIG['omniauth_facebook_secret']
+
   # ==> Warden configuration
   # If you want to use other strategies, that are not supported by Devise, or
   # change the failure app, you can configure them inside the config.warden block.

@@ -1,6 +1,7 @@
 # Rails 8 Upgrade - Summary of Changes
 
 ## Overview
+
 This document summarizes the upgrade from Rails 4.2 (Ruby 2.4) to Rails 8.0 (Ruby 3.4.5).
 
 ## Major Version Changes
@@ -11,6 +12,7 @@ This document summarizes the upgrade from Rails 4.2 (Ruby 2.4) to Rails 8.0 (Rub
 ## Gem Changes
 
 ### Updated Gems
+
 - `pg`: 0.21 → 1.5.x (PostgreSQL adapter)
 - `activerecord-postgis-adapter`: 3.0 → 11.0 (Rails 8 compatible)
 - `acts-as-taggable-on`: 3.5.0 → 12.0 (Rails 8 compatible)
@@ -24,11 +26,13 @@ This document summarizes the upgrade from Rails 4.2 (Ruby 2.4) to Rails 8.0 (Rub
 - `hiredis-client`: Added for Redis performance
 
 ### Replaced Gems
+
 - `paperclip` → `kt-paperclip` (Rails 7+ compatible fork)
 - `factory_girl_rails` → `factory_bot_rails`
 - `mimemagic` → `marcel` (Rails built-in MIME detection)
 
 ### Removed Gems
+
 - `simple_token_authentication` (incompatible with Rails 8, use Devise tokens)
 - `rails-api` (merged into Rails core)
 - `redis-rails` (use built-in Redis cache store)
@@ -39,6 +43,7 @@ This document summarizes the upgrade from Rails 4.2 (Ruby 2.4) to Rails 8.0 (Rub
 - `coffee-rails` (deprecated, use modern JavaScript)
 
 ### New Asset Pipeline Gems
+
 - `propshaft`: Modern asset pipeline replacement for Sprockets
 - `importmap-rails`: JavaScript with ESM imports
 - `stimulus-rails`: Hotwire Stimulus framework
@@ -47,23 +52,29 @@ This document summarizes the upgrade from Rails 4.2 (Ruby 2.4) to Rails 8.0 (Rub
 ## Configuration Changes
 
 ### Core Files Updated
+
 1. **config/application.rb**
+
    - Updated `require` statements to use `require_relative`
    - Added `config.load_defaults 8.0`
    - Added `config.autoload_lib(ignore: %w[assets tasks])`
    - Modernized comments and structure
 
 2. **config/boot.rb**
+
    - Updated file paths to use `__dir__` instead of `__FILE__`
 
 3. **config.ru**
+
    - Updated to use `require_relative`
    - Added `Rails.application.load_server`
 
 4. **Rakefile**
+
    - Updated to use `require_relative`
 
 5. **bin/rails & bin/rake**
+
    - Removed Spring integration
    - Updated to use `__dir__`
 
@@ -73,19 +84,24 @@ This document summarizes the upgrade from Rails 4.2 (Ruby 2.4) to Rails 8.0 (Rub
 ### Initializers Updated
 
 1. **config/initializers/session_store.rb**
+
    - Updated session key from `_rails4_mapwarper_session` to `_rails8_mapwarper_session`
 
 2. **config/initializers/application_config.rb**
+
    - Updated `YAML.load_file` to include `aliases: true` parameter for Psych 4+
 
 3. **config/initializers/cors.rb**
+
    - Changed `"Rack::Cors"` (string) to `Rack::Cors` (constant)
 
 4. **config/initializers/propshaft.rb** (NEW)
+
    - Added configuration for Propshaft asset pipeline
    - Configured asset paths for images, javascripts, and stylesheets
 
 5. **config/initializers/simple_token_authentication.rb**
+
    - Moved to `.bak` (gem removed)
    - Needs to be migrated to Devise token authentication
 
@@ -96,6 +112,7 @@ This document summarizes the upgrade from Rails 4.2 (Ruby 2.4) to Rails 8.0 (Rub
 ### Environment Files Updated
 
 1. **config/environments/development.rb**
+
    - Updated `config.cache_store` from `:redis_store` to `:redis_cache_store`
    - Removed deprecated `config.assets.raise_runtime_errors`
    - Removed deprecated `config.active_record.raise_in_transactional_callbacks`
@@ -109,16 +126,19 @@ This document summarizes the upgrade from Rails 4.2 (Ruby 2.4) to Rails 8.0 (Rub
 ## Code Changes
 
 ### Models
+
 1. **app/models/user.rb**
    - Commented out `acts_as_token_authenticatable` (gem removed)
    - Added TODO comment for migration to Devise token authentication
 
 ### Tests
+
 1. **test/test_helper.rb**
+
    - Updated `FactoryGirl` → `FactoryBot`
    - Updated `require` statements to use `require_relative`
 
-2. **test/factories/*.rb**
+2. **test/factories/\*.rb**
    - Updated all `FactoryGirl` references to `FactoryBot`
 
 ## Database Compatibility
@@ -148,11 +168,16 @@ The asset pipeline has been modernized:
 ## Authentication Changes
 
 ### Token Authentication
+
 - `simple_token_authentication` gem removed (incompatible with Rails 8)
-- Need to implement token authentication using Devise built-in capabilities
-- API authentication endpoints may need updates
+- Implement Devise-based tokens:
+  - Enable `:token_authenticatable` (or custom token strategy) on `User` and add an `authentication_token` column with unique index.
+  - Provide a rake task/console helper to backfill tokens for existing users (`User.find_each(&:ensure_authentication_token!)`).
+  - Replace API token checks with `User.authenticate_by(authentication_token:)` or equivalent Devise helper.
+  - Update request specs and API docs to cover token issuance/rotation workflows.
 
 ### OAuth Integration
+
 - All OAuth providers (GitHub, Twitter, OSM, Facebook, MediaWiki) updated
 - `omniauth-rails_csrf_protection` updated to v1.0
 
@@ -166,25 +191,30 @@ The asset pipeline has been modernized:
 ## Deployment Considerations
 
 ### Ruby Version
+
 - Ensure production environment has Ruby 3.2+ (preferably 3.4.5)
 - Update `.ruby-version` file is updated to `ruby-3.4.5`
 
 ### Bundle Configuration
+
 - Run `bundle install` on all environments
 - Update `Gemfile.lock`
 - May need to recompile native extensions
 
 ### Database
+
 - Run migrations: `bundle exec rake db:migrate`
 - No schema changes required for Rails 8
 - PostGIS compatibility verified
 
 ### Assets
+
 - Precompile assets: `bundle exec rake assets:precompile`
 - Test asset serving in production mode
 - Verify JavaScript import maps are working
 
 ### Cache Store
+
 - Ensure Redis is available
 - Update Redis connection strings if needed
 - Clear existing cache: `bundle exec rake cache:clear`
@@ -192,16 +222,19 @@ The asset pipeline has been modernized:
 ## Known Issues & TODOs
 
 1. **Token Authentication Migration**
+
    - Need to implement Devise-based token authentication
    - Update API controllers to use new authentication method
    - Test API endpoints with new authentication
 
 2. **Paperclip → ActiveStorage Migration**
+
    - Currently using `kt-paperclip` fork for compatibility
    - Should plan migration to ActiveStorage (Rails built-in)
    - This is a larger effort requiring data migration
 
 3. **Asset Pipeline Testing**
+
    - Verify all JavaScript/CSS assets load correctly
    - Test vendor assets (OpenLayers, jQuery UI, etc.)
    - Ensure image assets are accessible

@@ -1,35 +1,35 @@
-FactoryBot.define do
+# frozen_string_literal: true
 
-  factory :user, :class => User do
-    login "user"
-    email "test@example.com"
-    password "password"
-    password_confirmation "password"
-    confirmed_at Date.today
+FactoryBot.define do
+  factory :user, class: 'User' do
+    login { 'user' }
+    email { 'test@example.com' }
+    password { 'password' }
+    password_confirmation { 'password' }
+    confirmed_at { Date.today }
   end
-  
-  factory :admin, :class => User do
-    login "admin"
-    email "admin@example.com"
-    password "password"
-    password_confirmation "password"
-    confirmed_at Date.today
-    after(:create) do | u |
+
+  factory :admin, class: 'User' do
+    login { 'admin' }
+    email { 'admin@example.com' }
+    password { 'password' }
+    password_confirmation { 'password' }
+    confirmed_at { Date.today }
+    after(:create) do |u|
       admin_role = FactoryBot.create(:admin_role)
       u.roles << admin_role
     end
   end
-  
-  factory :editor, :class => User do
-    login "editor"
-    email "editor@example.com"
-    password "password"
-    password_confirmation "password"
-    confirmed_at Date.today
-    after(:create) do | u |
+
+  factory :editor, class: 'User' do
+    login { 'editor' }
+    email { 'editor@example.com' }
+    password { 'password' }
+    password_confirmation { 'password' }
+    confirmed_at { Date.today }
+    after(:create) do |u|
       admin_role = FactoryBot.create(:editor_role)
       u.roles << admin_role
     end
   end
-
 end

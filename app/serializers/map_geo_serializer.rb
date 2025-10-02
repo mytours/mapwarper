@@ -2,11 +2,11 @@ class MapGeoSerializer < ActiveModel::Serializer
   attributes :id, :type, :properties, :geometry
 
   def type
-    "Feature"
+    'Feature'
   end
 
   def properties
-    { title: object.title, description: object.description, width: object.width, height: object.height, 
+    { title: object.title, description: object.description, width: object.width, height: object.height,
       status: object.status, created_at: object.created_at, bbox: object.bbox, thumb_url: object.upload.url(:thumb) }
   end
 
@@ -15,9 +15,8 @@ class MapGeoSerializer < ActiveModel::Serializer
       polygon = GeoRuby::SimpleFeatures::Polygon.from_ewkt(object.bbox_geom.as_text)
       coords = polygon.as_json[:coordinates].to_s
     else
-      coords = ""
+      coords = ''
     end
-    {type: "Polygon", coordinates: coords}
+    { type: 'Polygon', coordinates: coords }
   end
-
 end

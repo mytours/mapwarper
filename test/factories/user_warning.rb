@@ -1,11 +1,9 @@
+# frozen_string_literal: true
+
 FactoryBot.define do
-  
-    factory :warning, :class => UserWarning do
-      category "prune"
-      note "foo bar"
-      user { |u| [u.association(:user)] }
-    end
-   
-  
+  factory :warning, class: 'UserWarning' do
+    category { 'prune' }
+    note { 'foo bar' }
+    user { |u| [u.association(:user)] }
   end
-  
+end
