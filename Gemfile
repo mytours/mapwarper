@@ -91,6 +91,8 @@ gem "redcarpet", ">= 3.5.1"
 gem "nokogiri", ">= 1.10.10"
 gem 'marcel'  # Replaces mimemagic
 
+gem "csv"
+
 group :development do
    gem 'web-console'
    # gem 'spring'  # Spring is deprecated in Rails 8
