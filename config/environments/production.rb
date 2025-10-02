@@ -13,7 +13,9 @@ Rails.application.configure do
   # Full error reports are disabled and caching is turned on.
   config.consider_all_requests_local       = false
   config.action_controller.perform_caching = true
-  config.cache_store = :redis_store, "redis://localhost:6379/0/cache"
+  
+  # Redis cache store for Rails 8
+  config.cache_store = :redis_cache_store, { url: "redis://localhost:6379/0/cache" }
 
   # Enable Rack::Cache to put a simple HTTP cache in front of your application
   # Add `rack-cache` to your Gemfile before enabling this.
@@ -21,11 +23,10 @@ Rails.application.configure do
   # config.action_dispatch.rack_cache = true
 
   # Disable Rails's static asset server (Apache or nginx will already do this).
+  config.public_file_server.enabled = false
 
-  config.serve_static_files = false
-
-  # Compress JavaScripts and CSS.
-  config.assets.js_compressor = :uglifier
+  # Compress JavaScripts and CSS - handled by propshaft
+  # config.assets.js_compressor = :uglifier
   # config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
@@ -81,8 +82,6 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
-  
-  config.active_record.raise_in_transactional_callbacks = true
 
   # Increase libjpg jpegmem from default of 524M to allow gdal to process larger jpgs
   ENV['JPEGMEM'] = '6000M'

@@ -13,7 +13,8 @@ Rails.application.configure do
   config.consider_all_requests_local       = true
   config.action_controller.perform_caching = false
    
-  config.cache_store = :redis_store, "redis://localhost:6379/0/cache"
+  # Redis cache store for Rails 8
+  config.cache_store = :redis_cache_store, { url: "redis://localhost:6379/0/cache" }
 
   # Don't care if the mailer can't send.
   config.action_mailer.raise_delivery_errors = false
@@ -29,13 +30,7 @@ Rails.application.configure do
   # number of complex assets.
   config.assets.debug = false
 
-  # Adds additional error checking when serving assets at runtime.
-  # Checks for improperly declared sprockets dependencies.
-  # Raises helpful error messages.
-  config.assets.raise_runtime_errors = true
-
   config.i18n.fallbacks = true
   # Raises error for missing translations
   config.action_view.raise_on_missing_translations = true
-  config.active_record.raise_in_transactional_callbacks = true
 end

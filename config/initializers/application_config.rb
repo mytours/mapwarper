@@ -1,6 +1,6 @@
 CONFIG_PATH="#{Rails.root}/config/application.yml"
 
-APP_CONFIG = YAML.load_file(CONFIG_PATH)[Rails.env]
+APP_CONFIG = YAML.load_file(CONFIG_PATH, aliases: true)[Rails.env]
 
 #directories for maps and layer/mosaic tileindex shapefiles
 DST_MAPS_DIR = APP_CONFIG['dst_maps_dir'].blank? ? File.join(Rails.root, '/public/mapimages/dst/') : APP_CONFIG['dst_maps_dir']

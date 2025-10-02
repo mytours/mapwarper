@@ -52,3 +52,5 @@ test/test_files/*
 
 # docker env files
 .env.postgres
+vendor/bundle
+.bundle
