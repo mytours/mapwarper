@@ -6,7 +6,8 @@ class User < ActiveRecord::Base
     :recoverable, :rememberable, :trackable, :validatable,
     :omniauthable, :omniauth_providers => [:osm_oauth2, :facebook, :github]
 
-  acts_as_token_authenticatable
+  # TODO: Migrate to devise token authentication for Rails 8
+  # acts_as_token_authenticatable
 
   has_many :permissions
   has_many :roles, :through => :permissions

@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
 
   factory :basic_map, :class => Map do
     title "title"
@@ -50,9 +50,9 @@ FactoryGirl.define do
     
     #to create gcps at same time   
     #     after(:create) do |m|
-    #       FactoryGirl.create(:gcp_1, :map => m)
-    #       FactoryGirl.create(:gcp_2, :map => m)
-    #       FactoryGirl.create(:gcp_3, :map => m)
+    #       FactoryBot.create(:gcp_1, :map => m)
+    #       FactoryBot.create(:gcp_2, :map => m)
+    #       FactoryBot.create(:gcp_3, :map => m)
     #     end
 
   end

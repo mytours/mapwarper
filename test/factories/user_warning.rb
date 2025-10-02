@@ -1,4 +1,4 @@
-FactoryGirl.define do
+FactoryBot.define do
   
     factory :warning, :class => UserWarning do
       category "prune"

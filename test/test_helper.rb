@@ -1,5 +1,5 @@
 ENV['RAILS_ENV'] ||= 'test'
-require File.expand_path('../../config/environment', __FILE__)
+require_relative '../config/environment'
 require 'rails/test_help'
 require 'webmock/minitest'
 #require "mocha/test_unit"
@@ -13,7 +13,7 @@ Minitest.after_run do
 end
 
 class ActiveSupport::TestCase
-  include FactoryGirl::Syntax::Methods 
+  include FactoryBot::Syntax::Methods 
   # Setup all fixtures in test/fixtures/*.yml for all tests in alphabetical order.
   fixtures :all
   
@@ -33,19 +33,19 @@ class ActiveSupport::TestCase
 
 
   def admin_sign_in
-    admin_user = FactoryGirl.create(:admin)
+    admin_user = FactoryBot.create(:admin)
     request.env["devise.mapping"] = Devise.mappings[:admin]
     sign_in admin_user
   end
   
   def normal_user_sign_in
-    user = FactoryGirl.create(:user)
+    user = FactoryBot.create(:user)
     request.env["devise.mapping"] = Devise.mappings[:user]
     sign_in user
   end
   
    def editor_user_sign_in
-    user = FactoryGirl.create(:editor)
+    user = FactoryBot.create(:editor)
     request.env["devise.mapping"] = Devise.mappings[:editor]
     sign_in user
   end

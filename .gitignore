@@ -54,3 +54,6 @@ test/test_files/*
 .env.postgres
 vendor/bundle
 .bundle
+config/database.yml
+config/secrets.yml
+config/application.yml
