@@ -59,8 +59,8 @@ Groups of maps can be made into "mosaics" that will stitch together the composit
 
 ## Ruby & Rails
 
-- Rails 4
-- Ruby 2.4
+- Rails 8
+- Ruby 3.4.5
 
 ## Database
 
