@@ -59,9 +59,8 @@ class ImportsControllerTest < ActionController::TestCase
   end
 
   test 'maps of import' do
-    map = FactoryBot.create(:basic_map)
-    map2 = FactoryBot.create(:unstubbed_map)
-    @import.maps << [map, map2]
+    map = FactoryBot.create(:basic_map, import_id: @import.id)
+    map2 = FactoryBot.create(:unstubbed_map, import_id: @import.id)
     get :maps, params: { id: @import.id }
     assert_response :ok
 

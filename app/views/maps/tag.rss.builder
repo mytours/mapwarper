@@ -9,7 +9,7 @@ xml.rss version: '2.0' do
       xml.item do
         xml.title map.title
         xml.description map.description
-        xml.pubDate map.created_at.to_s(:rfc822)
+        xml.pubDate map.created_at.to_s
         xml.link map_url(map)
         xml.guid
       end

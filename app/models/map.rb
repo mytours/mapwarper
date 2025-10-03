@@ -15,6 +15,7 @@ class Map < ActiveRecord::Base
   has_many :my_maps, dependent: :destroy
   has_many :users, through: :my_maps
   belongs_to :owner, class_name: 'User'
+  belongs_to :import, optional: true
 
   has_attached_file :upload, styles: { thumb: ['100x100>', :png] },
                              url: '/:attachment/:id/:style/:basename.:extension',

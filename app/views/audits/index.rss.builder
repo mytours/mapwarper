@@ -22,7 +22,7 @@ xml.channel do
       xml.description t('.action') + ': ' + audit.action.gsub(/\W/,
                                                               '') + "\n" + summary(audit) + "\n #{t('audits.show.version')}: " + audit.version.to_s
 
-      xml.pubDate audit.created_at.to_s(:rfc822)
+      xml.pubDate audit.created_at.to_s
       xml.link activity_details_url(id: audit)
 
       xml.guid

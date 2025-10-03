@@ -1,4 +1,15 @@
 ENV['RAILS_ENV'] ||= 'test'
+
+# Suppress Ruby 3.4 frozen string literal warnings from third-party gems
+module Warning
+  def warn(message)
+    # Suppress frozen string literal warnings from gems
+    return if message.include?('literal string will be frozen')
+
+    super
+  end
+end
+
 require_relative '../config/environment'
 require 'rails/test_help'
 require 'webmock/minitest'

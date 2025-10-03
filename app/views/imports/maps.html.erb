@@ -1,7 +1,7 @@
 <h2><%= t('.header', name: @import.name ) %></h2>
 
 <p>
-  <%= t('.created', created_at: @import.created_at.to_s(:long)) %>
+  <%= t('.created', created_at: @import.created_at.to_s) %>
   
   <%= link_to(@import.user.login, user_path(@import.user.id))  -%></p>
 

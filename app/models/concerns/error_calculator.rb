@@ -7,8 +7,7 @@ require 'matrix'
 module ErrorCalculator
     extend ActiveSupport::Concern
 
-    included do
-  def calc_error(gcps)
+  def self.calc_error(gcps)
     if gcps.size > 3
       begin
         dest_set = []
@@ -110,7 +109,6 @@ module ErrorCalculator
     end
     [gcps, error]
   end
-end
 end
 
 # tiny helper module for ruby min and max used when calculating rms transformation error

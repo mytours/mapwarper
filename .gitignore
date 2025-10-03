@@ -50,6 +50,9 @@ vendor/bundle
 
 #test files
 test/test_files/*
+test/fixtures/data/dst/*
+!test/fixtures/data/dst/.keep
+
 
 # docker env files
 .env.postgres

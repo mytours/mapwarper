@@ -5,7 +5,7 @@
 <p>
   <%= t('.provider_user_html', :provider_thumb => image_tag(@user.provider+'_logo.png', width: '17', height: '17'), :provider_name => @user.provider_name.titlecase) %>
 <%- end %>
-<p><%= t('.joined') %>: <%= @user.created_at.to_s(:long) %></p>
+<p><%= t('.joined') %>: <%= @user.created_at.to_s %></p>
 <h3><%= t('.profile') %></h3>
 <p><%= (@user.description).gsub("\n","<br/>") %></p>
 <p><%=link_to t('.activity'), user_activity_url(:id=>@user.id) %></p>
