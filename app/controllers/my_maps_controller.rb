@@ -55,7 +55,7 @@ class MyMapsController < ApplicationController
   def get_user
     @user = User.find(params[:user_id])
 
-    if user_signed_in?
+    if current_user.present?
       if @user == current_user or current_user.has_role?('editor')
         @user
       else

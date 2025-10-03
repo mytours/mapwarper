@@ -1,7 +1,7 @@
 class Layer < ActiveRecord::Base
   has_many :layers_maps, dependent: :destroy
   has_many :maps, through: :layers_maps
-  belongs_to :user
+  belongs_to :user, optional: true
 
   acts_as_commentable
 
@@ -46,8 +46,8 @@ class Layer < ActiveRecord::Base
   end
 
   def update_counts
-    update_attribute(:maps_count, maps.real_maps.length)
-    update_attribute(:rectified_maps_count, maps.warped.count)
+    update_column(:maps_count, maps.real_maps.length)
+    update_column(:rectified_maps_count, maps.warped.count)
   end
 
   # def rectified_maps_count

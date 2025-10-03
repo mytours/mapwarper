@@ -35,7 +35,7 @@ class ImportsController < ApplicationController
   end
 
   def update
-    if @import.update_attributes(import_params)
+    if @import.update(import_params)
       @import.file_count = @import.dir_file_count
       flash[:notice] = t('.flash')
       redirect_to import_url(@import)

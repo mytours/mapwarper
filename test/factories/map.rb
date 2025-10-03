@@ -4,6 +4,7 @@ FactoryBot.define do
   factory :basic_map, class: 'Map' do
     title { 'title' }
     description { 'description' }
+    association :owner, factory: :user
   end
 
   factory :unstubbed_map, parent: :basic_map do

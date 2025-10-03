@@ -28,7 +28,7 @@ class GcpsController < ApplicationController
     soft = params[:soft]
 
     respond_to do |format|
-      if @gcp.update_attributes(x: x, y: y, lon: lon, lat: lat, name: name, soft: soft)
+      if @gcp.update(x: x, y: y, lon: lon, lat: lat, name: name, soft: soft)
 
         @map = @gcp.map
         @gcps = @map.gcps_with_error(params[:soft])

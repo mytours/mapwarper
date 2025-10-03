@@ -1,8 +1,8 @@
 <%= link_to "&lt; Browse imports".html_safe, imports_path %>
 
-<h2><%= t('.header', :import_name => @import.name ) %></h2>
+<h2><%= t('.header', import_name: @import.name ) %></h2>
 
-<p><%= t('imports.maps.created', :created_at => @import.created_at.to_s(:long) ) %> <%= link_to(( h @import.user.login), user_path(@import.user.id))  -%></p>
+<p><%= t('imports.maps.created', created_at: @import.created_at.to_s(:long) ) %> <%= link_to(@import.user.login, user_path(@import.user.id))  -%></p>
 <p><%= t('imports.index.status') %>: <b><%= @import.status %> </b></p>
 
 <%= render :partial => 'layers' %>

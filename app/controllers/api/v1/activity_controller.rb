@@ -23,7 +23,7 @@ class Api::V1::ActivityController < Api::V1::ApiController
       COUNT(case when action='destroy' and auditable_type='Gcp' then 1 end) as gcp_destroy_count
       from audits group by user_id, username ORDER BY #{order_options}"
 
-    audits = Audited::Adapters::ActiveRecord::Audit.paginate_by_sql(the_sql, paginate_options)
+    audits = Audited::Audit.paginate_by_sql(the_sql, paginate_options)
     render_json(audits)
   end
 
@@ -74,7 +74,7 @@ class Api::V1::ActivityController < Api::V1::ApiController
 
   def get_audits(where_options, order_options)
     select = 'id, auditable_id, auditable_type, user_id, action, version, created_at' # "audited_changes"
-    Audited::Adapters::ActiveRecord::Audit.unscoped.select(select).where(where_options).order(order_options).paginate(paginate_options)
+    Audited::Audit.unscoped.select(select).where(where_options).order(order_options).paginate(paginate_options)
   end
 
   def render_json(audits)

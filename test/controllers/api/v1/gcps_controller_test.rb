@@ -12,8 +12,7 @@ class GcpsControllerTest < ActionController::TestCase
     @gcp_3  = FactoryBot.create(:gcp_3, map: @map)
 
     @user = FactoryBot.create(:user)
-    request.env['devise.mapping'] = Devise.mappings[:user]
-    sign_in @user
+    sign_in(@user, scope: :user)
   end
 
   test 'show' do

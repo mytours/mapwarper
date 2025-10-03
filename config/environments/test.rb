@@ -16,6 +16,7 @@ Rails.application.configure do
   config.eager_load = ENV['CI'].present?
 
   # Configure public file server for tests with cache-control for performance.
+  config.public_file_server.enabled = true
   config.public_file_server.headers = { 'cache-control' => 'public, max-age=3600' }
 
   # Show full error reports.
@@ -50,4 +51,15 @@ Rails.application.configure do
 
   # Raise error when a before_action's only/except options reference missing actions.
   config.action_controller.raise_on_missing_callback_actions = true
+
+  # Allow RGeo and other geometry classes in YAML serialization for tests
+  config.active_record.yaml_column_permitted_classes = [
+    Symbol,
+    Time,
+    Date,
+    BigDecimal,
+    ActiveSupport::TimeWithZone,
+    ActiveSupport::TimeZone,
+    ActiveSupport::HashWithIndifferentAccess
+  ]
 end

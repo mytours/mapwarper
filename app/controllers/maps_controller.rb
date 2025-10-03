@@ -99,9 +99,9 @@ class MapsController < ApplicationController
 
       @maps = if @show_warped == '1'
                 Map.warped.are_public.where(where_options).where(year_conditions).order(order_options).paginate(paginate_params)
-              elsif @show_warped == '1' && (user_signed_in? and current_user.has_role?('editor'))
+              elsif @show_warped == '1' && (current_user.present? and current_user.has_role?('editor'))
                 Map.warped.where(where_options).where(year_conditions).order(order_options).paginate(paginate_params)
-              elsif @show_warped != '1' && (user_signed_in? and current_user.has_role?('editor'))
+              elsif @show_warped != '1' && (current_user.present? and current_user.has_role?('editor'))
                 Map.where(where_options).order(order_options).where(year_conditions).paginate(paginate_params)
               else
                 Map.are_public.where(where_options).where(year_conditions).order(order_options).paginate(paginate_params)
@@ -159,7 +159,7 @@ class MapsController < ApplicationController
     #
     # Not Logged in users
     #
-    unless user_signed_in?
+    unless current_user.present?
       @disabled_tabs = %w[warp edit clip align activity]
 
       @disabled_tabs += ['warped'] if @map.status.nil? or @map.status == :unloaded or @map.status == :loading
@@ -192,7 +192,7 @@ class MapsController < ApplicationController
     #
     # Logged in users
     #
-    unless user_signed_in? and (current_user.own_this_map?(params[:id]) or current_user.has_role?('editor'))
+    unless current_user.present? and (current_user.own_this_map?(params[:id]) or current_user.has_role?('editor'))
       @disabled_tabs += ['edit'] # don't allow anyone else to edit it, unless you are an editor
       if @map.published?
         @disabled_tabs += %w[warp clip align] # dont show any others unless you're an editor
@@ -247,7 +247,7 @@ class MapsController < ApplicationController
   def create
     @map = Map.new(map_params)
 
-    if user_signed_in?
+    if current_user.present?
       @map.owner = current_user
       @map.users << current_user
     end
@@ -265,7 +265,7 @@ class MapsController < ApplicationController
   end
 
   def update
-    if @map.update_attributes(map_params)
+    if @map.update(map_params)
       flash.now[:notice] = t('.flash')
     else
       flash.now[:error] = t('.error')
@@ -399,9 +399,9 @@ class MapsController < ApplicationController
 
       bbox_polygon = GeoRuby::SimpleFeatures::Polygon.from_coordinates([bbox_poly_ary]).as_wkt
       conditions = if params[:operation] == 'within'
-                     ["ST_Within(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))"]
+                     Arel.sql("ST_Within(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))")
                    else
-                     ["ST_Intersects(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))"]
+                     Arel.sql("ST_Intersects(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))")
                    end
 
     else
@@ -417,9 +417,9 @@ class MapsController < ApplicationController
     @operation = params[:operation]
 
     sort_geo = if @operation == 'intersect'
-                 "ABS(ST_Area(bbox_geom) - ST_Area(ST_GeomFromText('#{bbox_polygon}'))) ASC,  "
+                 Arel.sql("ABS(ST_Area(bbox_geom) - ST_Area(ST_GeomFromText('#{bbox_polygon}'))) ASC,  ")
                else
-                 'ST_Area(bbox_geom) DESC ,'
+                 Arel.sql('ST_Area(bbox_geom) DESC ,')
                end
 
     @year_min = Map.minimum(:issue_year).to_i - 1
@@ -578,7 +578,7 @@ class MapsController < ApplicationController
       @maps = @layer.maps.order(:map_type).paginate(per_page: 30, page: 1)
     end
 
-    render text: t('.flash', map_type: @map.map_type)
+    render plain: t('.flash', map_type: @map.map_type)
   end
 
   # pass in soft true to get soft gcps
@@ -615,7 +615,7 @@ class MapsController < ApplicationController
     lat = params[:lat]
     zoom = params[:zoom]
     respond_to do |format|
-      if map.update_attributes(rough_lon: lon, rough_lat: lat, rough_zoom: zoom) && lat && lon
+      if map.update(rough_lon: lon, rough_lat: lat, rough_zoom: zoom) && lat && lon
         map.save_rough_centroid(lon, lat)
         format.json do
           render json: { stat: 'ok', items: map }.to_json(except: %i[content_type size bbox_geom uuid parent_uuid filename parent_id map thumbnail rough_centroid]),
@@ -650,7 +650,7 @@ class MapsController < ApplicationController
   def set_rough_state
     map = Map.find(params[:id])
     respond_to do |format|
-      if map.update_attributes(rough_state: params[:rough_state]) && Map::ROUGH_STATE.include?(params[:rough_state].to_sym)
+      if map.update(rough_state: params[:rough_state]) && Map::ROUGH_STATE.include?(params[:rough_state].to_sym)
         format.json do
           render json: { stat: 'ok', items: ['id' => map.id, 'rough_state' => map.rough_state] }.to_json,
                  callback: params[:callback]
@@ -671,7 +671,7 @@ class MapsController < ApplicationController
           else
             map.status.to_s
           end
-    render text: sta
+    render plain: sta
   end
 
   # should check for admin only
@@ -689,8 +689,8 @@ class MapsController < ApplicationController
   def save_mask
     message = @map.save_mask(params[:output])
     respond_to do |format|
-      format.html { render text: message }
-      format.js { render text: message } if request.xhr?
+      format.html { render plain: message }
+      format.js { render plain: message } if request.xhr?
       format.json { render json: { stat: 'ok', message: message }.to_json, callback: params[:callback] }
     end
   end
@@ -698,8 +698,8 @@ class MapsController < ApplicationController
   def delete_mask
     message = @map.delete_mask
     respond_to do |format|
-      format.html { render text: message }
-      format.js { render text: message } # if request.xhr?
+      format.html { render plain: message }
+      format.js { render plain: message } # if request.xhr?
       format.json { render json: { stat: 'ok', message: message }.to_json, callback: params[:callback] }
     end
   end
@@ -708,13 +708,13 @@ class MapsController < ApplicationController
     respond_to do |format|
       if File.exist?(@map.masking_file_gml)
         message = @map.mask!
-        format.html { render text: message }
-        format.js { render text: message } # if request.xhr?
+        format.html { render plain: message }
+        format.js { render plain: message } # if request.xhr?
         format.json { render json: { stat: 'ok', message: message }.to_json, callback: params[:callback] }
       else
         message = t('.not_found')
-        format.html { render text: message }
-        format.js { render text: message } # if request.xhr?
+        format.html { render plain: message }
+        format.js { render plain: message } # if request.xhr?
         format.json { render json: { stat: 'fail', message: message }.to_json, callback: params[:callback] }
       end
     end
@@ -741,7 +741,7 @@ class MapsController < ApplicationController
 
     respond_to do |format|
       format.json { render json: { stat: stat, message: msg }.to_json, callback: params[:callback] }
-      format.js { render text: msg } if request.xhr?
+      format.js { render plain: msg } if request.xhr?
     end
   end
 
@@ -775,13 +775,13 @@ class MapsController < ApplicationController
     respond_to do |format|
       if @too_few || @fail
         format.js
-        format.html { render text: @notice_text }
+        format.html { render plain: @notice_text }
         format.json do
           render json: { stat: 'fail', message: @notice_text }.to_json, callback: params[:callback]
         end
       else
         format.js
-        format.html { render text: @notice_text }
+        format.html { render plain: @notice_text }
         format.json do
           render json: { stat: 'ok', message: @notice_text }.to_json, callback: params[:callback]
         end
@@ -926,7 +926,7 @@ class MapsController < ApplicationController
       @notice_text = t('maps.rectify_main.being_rectified_error')
       @output = @notice_text
     else
-      if user_signed_in?
+      if current_user.present?
         um = current_user.my_maps.new(map: @map)
         um.save if um.valid?
       end
@@ -969,7 +969,7 @@ class MapsController < ApplicationController
 
   # only allow deleting by a user if the user owns it
   def check_if_map_can_be_deleted
-    if user_signed_in? and (current_user.own_this_map?(params[:id]) or current_user.has_role?('editor'))
+    if current_user.present? and (current_user.own_this_map?(params[:id]) or current_user.has_role?('editor'))
       @map = Map.find(params[:id])
     else
       flash[:notice] = t('maps.destroy.cannot_delete_others')
@@ -990,7 +990,7 @@ class MapsController < ApplicationController
 
   # only allow editing by a user if the user owns it, or if and editor tries to edit it
   def check_if_map_is_editable
-    if user_signed_in? and (current_user.own_this_map?(params[:id]) or current_user.has_role?('editor'))
+    if current_user.present? and (current_user.own_this_map?(params[:id]) or current_user.has_role?('editor'))
       @map = Map.find(params[:id])
     elsif Map.find(params[:id]).owner.nil?
       @map = Map.find(params[:id])
@@ -1005,7 +1005,7 @@ class MapsController < ApplicationController
 
     if @map.status.nil? or @map.status == :unloaded or @map.status == :loading
       redirect_to map_path
-    elsif (!@map.public? and !user_signed_in?) or ((!@map.public? and user_signed_in?) and !(current_user.own_this_map?(params[:id]) or current_user.has_role?('editor')))
+    elsif (!@map.public? and !current_user.present?) or ((!@map.public? and current_user.present?) and !(current_user.own_this_map?(params[:id]) or current_user.has_role?('editor')))
       redirect_to maps_path
     end
   end

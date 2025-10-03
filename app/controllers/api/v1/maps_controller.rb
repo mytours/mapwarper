@@ -80,15 +80,15 @@ class Api::V1::MapsController < Api::V1::ApiController
         ]
         bbox_polygon = GeoRuby::SimpleFeatures::Polygon.from_coordinates([bbox_poly_ary], -1).as_ewkt
         bbox_conditions = if params[:operation] == 'within'
-                            ["ST_Within(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))"]
+                            Arel.sql("ST_Within(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))")
                           else
-                            ["ST_Intersects(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))"]
+                            Arel.sql("ST_Intersects(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))")
                           end
 
         sort_geo = if params[:operation] == 'intersect'
-                     "ABS(ST_Area(bbox_geom) - ST_Area(ST_GeomFromText('#{bbox_polygon}'))) ASC"
+                     Arel.sql("ABS(ST_Area(bbox_geom) - ST_Area(ST_GeomFromText('#{bbox_polygon}'))) ASC")
                    else
-                     'ST_Area(bbox_geom) DESC'
+                     Arel.sql('ST_Area(bbox_geom) DESC')
                    end
       end
 
@@ -118,7 +118,7 @@ class Api::V1::MapsController < Api::V1::ApiController
   def create
     @map = Map.new(map_params)
 
-    if user_signed_in?
+    if current_user.present?
       @map.owner = current_user
       @map.users << current_user
     end
@@ -133,7 +133,7 @@ class Api::V1::MapsController < Api::V1::ApiController
   def update
     map_params.extract!(:upload, :upload_url)
 
-    if @map.update_attributes(map_params)
+    if @map.update(map_params)
       render json: @map
     else
       render json: @map, status: :unprocessable_entity, serializer: ActiveModel::Serializer::ErrorSerializer
@@ -279,7 +279,7 @@ class Api::V1::MapsController < Api::V1::ApiController
   end
 
   def status
-    render text: @map.status
+    render plain: @map.status
   end
 
   private
@@ -301,7 +301,7 @@ class Api::V1::MapsController < Api::V1::ApiController
   end
 
   def can_edit_map
-    return if user_signed_in? and ((current_user == @map.owner) or current_user.has_role?('editor'))
+    return if current_user.present? && ((current_user == @map.owner) || current_user.has_role?('editor'))
 
     permission_denied
   end

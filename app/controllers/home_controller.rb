@@ -16,7 +16,7 @@ class HomeController < ApplicationController
 
     get_news_feeds
 
-    @my_maps = current_user.maps.order(updated_at: :desc).limit(3) if user_signed_in?
+    @my_maps = current_user.maps.order(updated_at: :desc).limit(3) if current_user.present?
     respond_to do |format|
       format.html # index.html.erb
       format.xml  { render xml: @maps }
@@ -37,7 +37,7 @@ class HomeController < ApplicationController
   private
 
   def get_news_feeds
-    @feeds = Rails.cache.fetch('mapwarper_news', expires_in: 1.day.from_now) do
+    @feeds = Rails.cache.fetch('mapwarper_news', expires_in: 1.day) do
       feeds = RssParser.run('https://thinkwhere.wordpress.com/tag/mapwarper/feed/')
       feeds[:items][0..2]
     end

@@ -2,7 +2,7 @@ class Import < ActiveRecord::Base
   require 'csv'
 
   has_many :maps
-  belongs_to :layer
+  belongs_to :layer, optional: true
   belongs_to :user, class_name: 'User'
   has_and_belongs_to_many :layers
 
@@ -39,8 +39,8 @@ class Import < ActiveRecord::Base
   end
 
   def prepare_run
-    update_attribute(:status, :running)
-    update_attribute(:log_filename, logfile)
+    update_column(:status, :running)
+    update_column(:log_filename, logfile)
   end
 
   def finish_import(_options)

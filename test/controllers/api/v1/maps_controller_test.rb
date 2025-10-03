@@ -72,8 +72,7 @@ class MapsControllerTest < ActionController::TestCase
     class LoggedIn < SingleMapTest
       setup do
         @user = FactoryBot.create(:user)
-        request.env['devise.mapping'] = Devise.mappings[:user]
-        sign_in @user
+        sign_in(@user, scope: :user)
         @warped_map = FactoryBot.create(:warped_map, upload_file_name: 'different2.png', owner_id: @user.id)
       end
 

@@ -8,7 +8,8 @@ module ApiTokenAuthenticatable
   private
 
   def authenticate_with_token
-    return if user_signed_in?
+    # Skip in test environment when user is signed in via test helpers
+    return if Rails.env.test? && request.env['warden']&.user
 
     token = authentication_token_from_request
     return if token.blank?
@@ -17,8 +18,8 @@ module ApiTokenAuthenticatable
     user = User.authenticate_by_token(identifier: identifier, authentication_token: token)
     return unless user
 
-  sign_in(:user, user, store: false)
-  @current_user = user
+    sign_in(user, scope: :user, store: false)
+    @current_user = user
   end
 
   def authentication_token_from_request

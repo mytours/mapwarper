@@ -112,9 +112,9 @@ class LayersController < ApplicationController
 
       bbox_polygon = GeoRuby::SimpleFeatures::Polygon.from_coordinates([bbox_poly_ary]).as_wkt
       conditions = if params[:operation] == 'within'
-                     ["ST_Within(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))"]
+                     Arel.sql("ST_Within(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))")
                    else
-                     ["ST_Intersects(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))"]
+                     Arel.sql("ST_Intersects(bbox_geom, ST_GeomFromText('#{bbox_polygon}'))")
                    end
 
     else
@@ -129,9 +129,9 @@ class LayersController < ApplicationController
     @operation = params[:operation]
 
     if @operation == 'intersect'
-      "ABS(ST_Area(bbox_geom) - ST_Area(ST_GeomFromText('#{bbox_polygon}'))) ASC,  "
+      Arel.sql("ABS(ST_Area(bbox_geom) - ST_Area(ST_GeomFromText('#{bbox_polygon}'))) ASC,  ")
     else
-      'ST_Area(bbox_geom) DESC ,'
+      Arel.sql('ST_Area(bbox_geom) DESC ,')
     end
 
     @year_min = Map.minimum(:issue_year) - 1
@@ -290,7 +290,7 @@ class LayersController < ApplicationController
       @disabled_tabs = ['export']
     end
 
-    if user_signed_in? and (current_user.own_this_layer?(params[:id]) or current_user.has_role?('editor'))
+    if current_user.present? and (current_user.own_this_layer?(params[:id]) or current_user.has_role?('editor'))
       @maps = @layer.maps.order(:map_type).paginate(page: params[:page], per_page: 30)
     else
       @disabled_tabs += ['edit']
@@ -375,7 +375,7 @@ class LayersController < ApplicationController
     @layer = Layer.find(params[:id])
     @maps = current_user.maps
     @layer.maps = Map.find(params[:map_ids]) if params[:map_ids]
-    if @layer.update_attributes(layer_params)
+    if @layer.update(layer_params)
       @layer.update_layer
       @layer.update_counts
       flash.now[:notice] = t('.flash')
@@ -402,7 +402,7 @@ class LayersController < ApplicationController
   end
 
   def destroy
-    if user_signed_in? and (current_user.own_this_layer?(params[:id]) or current_user.has_role?('editor'))
+    if current_user.present? and (current_user.own_this_layer?(params[:id]) or current_user.has_role?('editor'))
       @layer = Layer.find(params[:id])
     else
       flash[:notice] = t('.not_others')
@@ -456,7 +456,7 @@ class LayersController < ApplicationController
   end
 
   def update_year
-    @layer.update_attributes(params[:layer].permit(:depicts_year))
+    @layer.update(params[:layer].permit(:depicts_year))
     render json: { message: t('.message') + @layer.depicts_year.to_s }
   end
 
@@ -470,7 +470,7 @@ class LayersController < ApplicationController
       @dest_layer = Layer.find(params[:dest_id])
 
       @layer.merge(@dest_layer.id)
-      render text: t('.flash')
+      render plain: t('.flash')
     end
   end
 
@@ -478,16 +478,16 @@ class LayersController < ApplicationController
     @map = Map.find(params[:map_id])
 
     @layer.remove_map(@map.id)
-    render text: t('.flash')
+    render plain: t('.flash')
   end
 
   def publish
     if @layer.rectified_percent < 100
-      render text: t('.not_all_maps_ready')
+      render plain: t('.not_all_maps_ready')
       # redirect_to :action => 'index'
     else
       @layer.publish
-      render text: t('.flash')
+      render plain: t('.flash')
     end
   end
 
@@ -694,7 +694,7 @@ class LayersController < ApplicationController
   private
 
   def check_if_layer_is_editable
-    if user_signed_in? and (current_user.own_this_layer?(params[:id]) or current_user.has_role?('editor'))
+    if current_user.present? and (current_user.own_this_layer?(params[:id]) or current_user.has_role?('editor'))
       @layer = Layer.find(params[:id])
     else
       flash[:notice] = t('layers.edit.cannot_edit_others')

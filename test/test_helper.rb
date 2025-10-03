@@ -35,21 +35,18 @@ class ActiveSupport::TestCase
     "#{Rails.root.join('test/test_files/:class/:id_partition/:style.:extension')}"
 
   def admin_sign_in
-    admin_user = FactoryBot.create(:admin)
-    request.env['devise.mapping'] = Devise.mappings[:admin]
-    sign_in admin_user
+    @admin_user = FactoryBot.create(:admin)
+    sign_in(@admin_user, scope: :user)
   end
 
   def normal_user_sign_in
-    user = FactoryBot.create(:user)
-    request.env['devise.mapping'] = Devise.mappings[:user]
-    sign_in user
+    @user = FactoryBot.create(:user)
+    sign_in(@user, scope: :user)
   end
 
   def editor_user_sign_in
-    user = FactoryBot.create(:editor)
-    request.env['devise.mapping'] = Devise.mappings[:editor]
-    sign_in user
+    @editor_user = FactoryBot.create(:editor)
+    sign_in(@editor_user, scope: :user)
   end
 end
 

@@ -11,8 +11,8 @@
  * file per style scope.
  *
  *= require_self
+ *= require jquery-ui
  *= require openlayers/theme/default/style
- *= require custom-theme/jquery-ui-1.7.custom
  *= require main
  *= require jquery.nouislider.min
  */

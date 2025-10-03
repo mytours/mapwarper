@@ -7,7 +7,7 @@
 <%- end %>
 <p><%= t('.joined') %>: <%= @user.created_at.to_s(:long) %></p>
 <h3><%= t('.profile') %></h3>
-<p><%= (h @user.description).gsub("\n","<br/>") %></p>
+<p><%= (@user.description).gsub("\n","<br/>") %></p>
 <p><%=link_to t('.activity'), user_activity_url(:id=>@user.id) %></p>
 <%= render :partial => 'users/admin_tools', :object => @user %>
 <h3><%= t('.user_maps') %></h3>

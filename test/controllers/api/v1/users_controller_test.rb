@@ -7,15 +7,13 @@ class UsersControllerTest < ActionController::TestCase
 
   setup do
     @user = FactoryBot.create(:user)
-    request.env['devise.mapping'] = Devise.mappings[:user]
-    sign_in @user
+    sign_in(@user, scope: :user)
   end
 
   def admin_sign_in
     sign_out @user
     @admin_user = FactoryBot.create(:admin)
-    request.env['devise.mapping'] = Devise.mappings[:admin]
-    sign_in @admin_user
+    sign_in(@admin_user, scope: :user)
   end
 
   test 'show' do

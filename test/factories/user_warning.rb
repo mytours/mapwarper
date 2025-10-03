@@ -4,6 +4,6 @@ FactoryBot.define do
   factory :warning, class: 'UserWarning' do
     category { 'prune' }
     note { 'foo bar' }
-    user { |u| [u.association(:user)] }
+    association :user
   end
 end

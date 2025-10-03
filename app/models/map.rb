@@ -3,6 +3,7 @@ require 'csv'
 
 class Map < ActiveRecord::Base
   include ErrorCalculator
+
   NON_FATAL_GDAL_WARNING_PATTERNS = [
     /Warning 1: INIT_DEST was set to NO_DATA, but a NoData value was not defined/i,
     /\A\[\]\z/
@@ -439,7 +440,7 @@ class Map < ActiveRecord::Base
   def update_map_type(map_type)
     return unless Map::MAP_TYPE.include? map_type.to_sym
 
-    update_attributes(map_type: map_type.to_sym)
+    update(map_type: map_type.to_sym)
     update_layers
   end
 

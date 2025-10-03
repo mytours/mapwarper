@@ -57,7 +57,7 @@ class Api::V1::GcpsController < Api::V1::ApiController
   end
 
   def update
-    if @gcp.update_attributes(gcp_params)
+    if @gcp.update(gcp_params)
       render json: @gcp
     else
       render json: @gcp, status: :unprocessable_entity, serializer: ActiveModel::Serializer::ErrorSerializer

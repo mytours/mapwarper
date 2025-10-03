@@ -48,7 +48,7 @@ class User < ActiveRecord::Base
   end
 
   def force_confirm!
-    update_attribute(:confirmed_at, Time.now.utc)
+    update_column(:confirmed_at, Time.now.utc)
   end
 
   def provider_name
@@ -227,7 +227,7 @@ class User < ActiveRecord::Base
     ActiveSupport::SecurityUtils.secure_compare(authentication_token, token)
   end
 
-  def self.authenticate_by_token(identifier: nil, authentication_token:)
+  def self.authenticate_by_token(authentication_token:, identifier: nil)
     return nil if authentication_token.blank?
 
     user = if identifier.present?

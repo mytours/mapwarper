@@ -22,6 +22,7 @@ gem 'turbo-rails'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
+gem 'jquery-ui-rails'
 # Turbolinks makes following links in your web application faster. Read more: https://github.com/rails/turbolinks
 # gem 'turbolinks'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -61,8 +62,8 @@ gem 'activerecord-postgis-adapter'
 
 gem 'acts-as-taggable-on', '~> 12.0'
 # Paperclip is deprecated, but keeping for now - should migrate to ActiveStorage
-gem 'acts_as_commentable'
-gem 'kt-paperclip' # Rails 7+ compatible fork
+gem 'acts_as_commentable', github: 'fatfreecrm/acts_as_commentable', branch: 'main' # Rails 8 compatible fork
+gem 'kt-paperclip', '7.2.2' # Rails 7+ compatible fork
 gem 'spawnling', '~>2.1'
 gem 'will_paginate'
 
@@ -93,8 +94,8 @@ gem 'redcarpet', '>= 3.5.1'
 
 gem 'csv'
 
-gem "puma"
-gem "matrix"
+gem 'matrix'
+gem 'puma'
 
 group :development do
   gem 'web-console'
@@ -113,5 +114,6 @@ end
 group :test do
   gem 'factory_bot_rails' # Renamed from factory_girl_rails
   gem 'mocha'
+  gem 'rails-controller-testing' # For assigns and assert_template in controller tests
   gem 'webmock'
 end

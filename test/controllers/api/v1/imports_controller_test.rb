@@ -1,14 +1,13 @@
 require 'test_helper'
 
 class ApiImportsControllerTest < ActionController::TestCase
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
 
   tests Api::V1::ImportsController
 
   setup do
     @user = FactoryBot.create(:admin)
-    request.env['devise.mapping'] = Devise.mappings[:admin]
-    sign_in @user
+    sign_in(@user, scope: :user)
     @import = FactoryBot.create(:import, user: @user)
     @import.save
   end

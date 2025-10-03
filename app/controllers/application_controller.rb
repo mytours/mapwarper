@@ -45,7 +45,7 @@ class ApplicationController < ActionController::Base
   end
 
   def check_role(role)
-    return if user_signed_in? && @current_user.has_role?(role)
+    return if current_user.present? && @current_user.has_role?(role)
 
     permission_denied
   end

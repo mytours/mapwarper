@@ -57,5 +57,5 @@
 
 <div id="afterImport">
   <h3><%= t('.finished_notice') %></h3>
- <%= t('.view') %>: <%= link_to(( h @import.name), import_path(@import.id)) %>
+ <%= t('.view') %>: <%= link_to(@import.name, import_path(@import.id)) %>
 </div>

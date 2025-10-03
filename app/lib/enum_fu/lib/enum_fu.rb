@@ -24,7 +24,7 @@ module EnumFu
         # define a singleton method which get the enum value
         # example: Car.status(:broken)   =>  1
         p1 = proc { |v| const_get(const_name).index(v) }
-        self.class.send(:define_method, name, p1)
+        (class << self; self; end).send(:define_method, name, &p1)
 
         # define an instance get/set methods  which get/set  the enum value
         # example:

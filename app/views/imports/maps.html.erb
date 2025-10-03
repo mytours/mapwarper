@@ -1,9 +1,9 @@
-<h2><%= t('.header', :name => @import.name ) %></h2>
+<h2><%= t('.header', name: @import.name ) %></h2>
 
 <p>
-  <%= t('.created', :created_at => @import.created_at.to_s(:long)) %>
+  <%= t('.created', created_at: @import.created_at.to_s(:long)) %>
   
-  <%= link_to(( @import.user.login), user_path(@import.user.id), :method => :get)  -%></p>
+  <%= link_to(@import.user.login, user_path(@import.user.id))  -%></p>
 
 <%= render :partial => 'layers' %>
 

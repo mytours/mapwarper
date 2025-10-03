@@ -15,7 +15,7 @@ class Api::V1::ApiController < ActionController::API
 
   def check_role(role)
     user = current_user || @current_user
-    return if user_signed_in? && user&.has_role?(role)
+    return if current_user.present? && current_user&.has_role?(role)
 
     permission_denied
   end

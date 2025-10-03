@@ -41,7 +41,7 @@ class Api::V1::ImportsController < Api::V1::ApiController
   end
 
   def update
-    if @import.update_attributes(import_params)
+    if @import.update(import_params)
       @import.file_count = @import.dir_file_count
       render json: @import
     else

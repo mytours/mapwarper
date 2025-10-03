@@ -30,7 +30,7 @@ class UsersController < ApplicationController
 
       from audits group by user_id, username ORDER BY #{sort_clause}"
 
-    @users_activity = Audited::Adapters::ActiveRecord::Audit.paginate_by_sql(the_sql,
+    @users_activity = Audited::Audit.paginate_by_sql(the_sql,
                                                                              page: params[:page],
                                                                              per_page: 30)
   end
@@ -83,7 +83,7 @@ class UsersController < ApplicationController
 
   def update
     @user = User.find(current_user)
-    if @user.update_attributes(params[:user])
+    if @user.update(params[:user])
       flash[:notice] = t('.flash')
       redirect_to action: 'show', id: current_user
     else

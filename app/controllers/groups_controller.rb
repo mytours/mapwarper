@@ -47,7 +47,7 @@ class GroupsController < ApplicationController
   end
 
   def update
-    if @group.update_attributes(group_params)
+    if @group.update(group_params)
       flash[:notice] = 'Successfully updated group.'
       redirect_to group_url(@group)
     else

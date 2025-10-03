@@ -4,7 +4,7 @@ class AuditsController < ApplicationController
 
   def index
     @html_title = t('.html_title')
-    @audits = Audited::Adapters::ActiveRecord::Audit.unscoped.order(created_at: :desc).paginate(page: params[:page],
+    @audits = Audited::Audit.unscoped.order(created_at: :desc).paginate(page: params[:page],
                                                                                                 per_page: 20)
     @title = t('.title')
     @linktomap = 'yes please'
@@ -12,7 +12,7 @@ class AuditsController < ApplicationController
   end
 
   def show
-    @audit = Audited::Adapters::ActiveRecord::Audit.find(params[:id])
+    @audit = Audited::Audit.find(params[:id])
   end
 
   def for_user
@@ -28,7 +28,7 @@ class AuditsController < ApplicationController
 
     order_options = 'created_at DESC'
     where_options = ['user_id = ?', user_id]
-    @audits = Audited::Adapters::ActiveRecord::Audit.unscoped.where(where_options).order(order_options).paginate(page: params[:page],
+    @audits = Audited::Audit.unscoped.where(where_options).order(order_options).paginate(page: params[:page],
                                                                                                                  per_page: 20)
 
     render action: 'index'
@@ -42,7 +42,7 @@ class AuditsController < ApplicationController
 
     order_options = 'created_at DESC'
     where_options = ['auditable_type = ? AND auditable_id = ?', 'Map', @map.id]
-    @audits = Audited::Adapters::ActiveRecord::Audit.unscoped.where(where_options).order(order_options).paginate(
+    @audits = Audited::Audit.unscoped.where(where_options).order(order_options).paginate(
       page: params[:page], per_page: 20
     )
 
@@ -62,7 +62,7 @@ class AuditsController < ApplicationController
     @html_title = t('.html_title')
     order_options = 'created_at DESC'
     where_options = ['auditable_type = ?', 'Map']
-    @audits = Audited::Adapters::ActiveRecord::Audit.unscoped.where(where_options).order(order_options).paginate(
+    @audits = Audited::Audit.unscoped.where(where_options).order(order_options).paginate(
       page: params[:page], per_page: 20
     )
 

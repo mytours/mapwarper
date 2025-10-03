@@ -8,7 +8,6 @@ class LayersControllerTest < ActionController::TestCase
   setup do
     @layer_user = FactoryBot.create(:user)
     @layer = FactoryBot.create(:layer_with_maps, user_id: @layer_user.id)
-    request.env['devise.mapping'] = Devise.mappings[:user]
   end
 
   teardown do

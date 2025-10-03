@@ -2,16 +2,16 @@
 
 FactoryBot.define do
   factory :user, class: 'User' do
-    login { 'user' }
-    email { 'test@example.com' }
+    sequence(:login) { |n| "user#{n}" }
+    sequence(:email) { |n| "test#{n}@example.com" }
     password { 'password' }
     password_confirmation { 'password' }
     confirmed_at { Date.today }
   end
 
   factory :admin, class: 'User' do
-    login { 'admin' }
-    email { 'admin@example.com' }
+    sequence(:login) { |n| "admin#{n}" }
+    sequence(:email) { |n| "admin#{n}@example.com" }
     password { 'password' }
     password_confirmation { 'password' }
     confirmed_at { Date.today }
@@ -22,8 +22,8 @@ FactoryBot.define do
   end
 
   factory :editor, class: 'User' do
-    login { 'editor' }
-    email { 'editor@example.com' }
+    sequence(:login) { |n| "editor#{n}" }
+    sequence(:email) { |n| "editor#{n}@example.com" }
     password { 'password' }
     password_confirmation { 'password' }
     confirmed_at { Date.today }

@@ -1,15 +1,13 @@
 require 'test_helper'
 
 class ImportsControllerTest < ActionController::TestCase
-  include Devise::TestHelpers
+  include Devise::Test::ControllerHelpers
 
   tests ImportsController
 
   setup do
-    @user = FactoryBot.create(:admin)
-    request.env['devise.mapping'] = Devise.mappings[:admin]
-    sign_in @user
-    @import = FactoryBot.create(:import, user: @user)
+    admin_sign_in
+    @import = FactoryBot.create(:import, user: @admin_user)
     @import.save
   end
 
@@ -20,15 +18,15 @@ class ImportsControllerTest < ActionController::TestCase
     end
     assert_redirected_to import_path(Import.last)
     import = Import.last
-    assert 'new import', import.name
-    assert 1, import.file_count
+    assert_equal 'new import', import.name
+    assert_equal 1, import.file_count
   end
 
   test 'udpate import' do
     patch :update, params: { id: @import.id, import: { name: 'changed name' } }
 
     assert_redirected_to @import
-    assert 'changed name', @import.name
+    assert_equal 'changed name', @import.reload.name
   end
 
   test 'show import' do
@@ -42,7 +40,7 @@ class ImportsControllerTest < ActionController::TestCase
     assert_response :ok
 
     assert_select 'tr', 2  # two tr the thead row and the import
-    assert_select 'a[href=?]', import_path(@import), { text: @import.name }
+    assert_select 'a[href=?]', import_path(@import), text: @import.name
   end
 
   test 'start import' do
@@ -69,6 +67,6 @@ class ImportsControllerTest < ActionController::TestCase
 
     assert_select 'tr', 3  # two tr the thead row and the import
 
-    assert_select 'a[href=?]', map_path(map), { text: map.title }
+    assert_select 'a[href=?]', map_path(map), text: map.title
   end
 end

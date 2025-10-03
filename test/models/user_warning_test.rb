@@ -47,7 +47,7 @@ class UserWarningTest < ActiveSupport::TestCase
                                                   note: 'maps are great')
     assert another_warning.valid?
 
-    assert_nothing_raised ActiveRecord::RecordInvalid do
+    assert_nothing_raised do
       FactoryBot.create(:warning, user: @user, category: 'foo', status: 'close', note: 'maps are great')
     end
   end
