@@ -8,8 +8,8 @@ class MapsControllerTest < ActionController::TestCase
   Paperclip::DataUriAdapter.register # enable this in the test environment as we use that to mock tests
 
   setup do
-    @map = FactoryGirl.create(:available_map)
-    @warped_map = FactoryGirl.create(:warped_map, upload_file_name: 'different.png')
+    @map = FactoryBot.create(:available_map)
+    @warped_map = FactoryBot.create(:warped_map, upload_file_name: 'different.png')
   end
 
   class SingleMapTest < MapsControllerTest
@@ -50,9 +50,9 @@ class MapsControllerTest < ActionController::TestCase
 
       #  test "get map in geojson format" do skip end
       test 'get map gcps' do
-        gcp_1 = FactoryGirl.create(:gcp_1, map: @warped_map)
-        FactoryGirl.create(:gcp_2, map: @warped_map)
-        FactoryGirl.create(:gcp_3, map: @warped_map)
+        gcp_1 = FactoryBot.create(:gcp_1, map: @warped_map)
+        FactoryBot.create(:gcp_2, map: @warped_map)
+        FactoryBot.create(:gcp_3, map: @warped_map)
         get :gcps, params: { id: @warped_map.id, format: :json }
         assert_response :success
         body = JSON.parse(response.body)
@@ -71,10 +71,10 @@ class MapsControllerTest < ActionController::TestCase
 
     class LoggedIn < SingleMapTest
       setup do
-        @user = FactoryGirl.create(:user)
+        @user = FactoryBot.create(:user)
         request.env['devise.mapping'] = Devise.mappings[:user]
         sign_in @user
-        @warped_map = FactoryGirl.create(:warped_map, upload_file_name: 'different2.png', owner_id: @user.id)
+        @warped_map = FactoryBot.create(:warped_map, upload_file_name: 'different2.png', owner_id: @user.id)
       end
 
       # editor or owner role needed
@@ -168,9 +168,9 @@ class MapsControllerTest < ActionController::TestCase
 
       test 'rectify' do
         assert_equal :available, @map.status
-        FactoryGirl.create(:gcp_1, map: @map)
-        FactoryGirl.create(:gcp_2, map: @map)
-        FactoryGirl.create(:gcp_3, map: @map)
+        FactoryBot.create(:gcp_1, map: @map)
+        FactoryBot.create(:gcp_2, map: @map)
+        FactoryBot.create(:gcp_3, map: @map)
         patch :rectify, params: { id: @map.id, format: :json, warp: 1 }
         assert_response :ok
         body = JSON.parse(response.body)
@@ -236,9 +236,9 @@ class MapsControllerTest < ActionController::TestCase
 
       # clip and rectify apply and warp
       test 'mask_crop_rectify' do
-        FactoryGirl.create(:gcp_1, map: @map)
-        FactoryGirl.create(:gcp_2, map: @map)
-        FactoryGirl.create(:gcp_3, map: @map)
+        FactoryBot.create(:gcp_1, map: @map)
+        FactoryBot.create(:gcp_2, map: @map)
+        FactoryBot.create(:gcp_3, map: @map)
 
         assert_equal :available, @map.status
         assert_equal :unmasked, @map.mask_status
@@ -305,11 +305,11 @@ class MapsControllerTest < ActionController::TestCase
 
   class CollectionMapTest < MapsControllerTest
     setup do
-      @index_maps = FactoryGirl.create_list(:index_map, 5)
+      @index_maps = FactoryBot.create_list(:index_map, 5)
     end
 
     test 'layers maps' do
-      layer = FactoryGirl.create(:layer_with_maps)
+      layer = FactoryBot.create(:layer_with_maps)
       get :index, params: { layer_id: layer.id, format: :json }
       assert_response :success
       assert_not_nil assigns(:maps)

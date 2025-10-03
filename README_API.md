@@ -1,73 +1,74 @@
 #Warper API Documentation
 
-Welcome to the documentation for the Warper API! MapWarper is a free application that assigns the proper geographic coordinates to scanned maps in image formats. Users can upload images, then assign ground control points to match them up with a base map. Once MapWarper warps or stretches the image to match the corresponding extent of the base map, it can be aligned and displayed with other maps, and used for digital geographic analysis. You can access all of the functionality through the API. 
+Welcome to the documentation for the Warper API! MapWarper is a free application that assigns the proper geographic coordinates to scanned maps in image formats. Users can upload images, then assign ground control points to match them up with a base map. Once MapWarper warps or stretches the image to match the corresponding extent of the base map, it can be aligned and displayed with other maps, and used for digital geographic analysis. You can access all of the functionality through the API.
 
 # Table of Contents
+
 <!-- TOC depthFrom:2 depthTo:6 withLinks:1 updateOnSave:1 orderedList:0 -->
 
 - [Api-Endpoint](#api-endpoint)
 - [Protocol](#protocol)
 - [Format](#format)
-	- [JSON format](#json-format)
+  - [JSON format](#json-format)
 - [Authentication](#authentication)
-	- [Authentication Token](#authentication-token)
-	- [Sign out](#sign-out)
-	- [Validate Token](#validate-token)
+  - [Authentication Token](#authentication-token)
+  - [Sign out](#sign-out)
+  - [Validate Token](#validate-token)
 - [Using the authentication token](#using-the-authentication-token)
-	- [Oauth Authenticaton and Authentication Token](#oauth-authenticaton-and-authentication-token)
-	- [Cookie Authentication](#cookie-authentication)
+  - [Oauth Authenticaton and Authentication Token](#oauth-authenticaton-and-authentication-token)
+  - [Cookie Authentication](#cookie-authentication)
 - [Search for Maps](#search-for-maps)
-	- [Get a Map](#get-a-map)
-	- [Get a Map's Status](#get-a-maps-status)
+  - [Get a Map](#get-a-map)
+  - [Get a Map's Status](#get-a-maps-status)
 - [Layers](#layers)
-	- [Query or List Layers](#query-or-list-layers)
-	- [Get Layer](#get-layer)
-	- [GeoJSON format](#geojson-format)
-	- [Get a Map's Layers](#get-a-maps-layers)
-	- [Get a Layer's Maps](#get-a-layers-maps)
-	- [Map and Layer Web Map Services](#map-and-layer-web-map-services)
-	- [Create Layer](#create-layer)
-	- [Update Layer](#update-layer)
-	- [Destroy Layer](#destroy-layer)
-	- [Toggle Layer Visibility](#toggle-layer-visibility)
-	- [Remove Map From Layer](#remove-map-from-layer)
-	- [Merge Layers](#merge-layers)
+  - [Query or List Layers](#query-or-list-layers)
+  - [Get Layer](#get-layer)
+  - [GeoJSON format](#geojson-format)
+  - [Get a Map's Layers](#get-a-maps-layers)
+  - [Get a Layer's Maps](#get-a-layers-maps)
+  - [Map and Layer Web Map Services](#map-and-layer-web-map-services)
+  - [Create Layer](#create-layer)
+  - [Update Layer](#update-layer)
+  - [Destroy Layer](#destroy-layer)
+  - [Toggle Layer Visibility](#toggle-layer-visibility)
+  - [Remove Map From Layer](#remove-map-from-layer)
+  - [Merge Layers](#merge-layers)
 - [Ground Control Points](#ground-control-points)
-	- [List and Sort Control Points](#list-and-sort-control-points)
-	- [Get a Map's Ground Control Points](#get-a-maps-ground-control-points)
-	- [Get a Single Ground Control Point](#get-a-single-ground-control-point)
-	- [Add Ground Control Point](#add-ground-control-point)
-	- [Update a GCP](#update-a-gcp)
-	- [Delete a GCP](#delete-a-gcp)
-	- [Add Many GCPs](#add-many-gcps)
+  - [List and Sort Control Points](#list-and-sort-control-points)
+  - [Get a Map's Ground Control Points](#get-a-maps-ground-control-points)
+  - [Get a Single Ground Control Point](#get-a-single-ground-control-point)
+  - [Add Ground Control Point](#add-ground-control-point)
+  - [Update a GCP](#update-a-gcp)
+  - [Delete a GCP](#delete-a-gcp)
+  - [Add Many GCPs](#add-many-gcps)
 - [Masking](#masking)
-	- [Get Mask](#get-mask)
-	- [Save Mask](#save-mask)
-	- [Delete Mask](#delete-mask)
-	- [Crop / Mask Map](#crop-mask-map)
-	- [Save, Mask, and Warp Map](#save-mask-and-warp-map)
+  - [Get Mask](#get-mask)
+  - [Save Mask](#save-mask)
+  - [Delete Mask](#delete-mask)
+  - [Crop / Mask Map](#crop-mask-map)
+  - [Save, Mask, and Warp Map](#save-mask-and-warp-map)
 - [Warping](#warping)
 - [Maps](#maps)
-	- [Create Map](#create-map)
-	- [Update Map](#update-map)
-	- [Destroy Map](#destroy-map)
-	- [Publish Map](#publish-map)
-	- [Unpublish Map](#unpublish-map)
+  - [Create Map](#create-map)
+  - [Update Map](#update-map)
+  - [Destroy Map](#destroy-map)
+  - [Publish Map](#publish-map)
+  - [Unpublish Map](#unpublish-map)
 - [Get a User](#get-a-user)
 - [List Users](#list-users)
 - [Imports](#imports)
-	- [Show Import](#show-import)
-	- [List Imports](#list-imports)
-	- [List Import Maps](#list-import-maps)
-	- [Create Import](#create-import)
-	- [Update Import](#update-import)
-	- [Destroy Import](#destroy-import)
+  - [Show Import](#show-import)
+  - [List Imports](#list-imports)
+  - [List Import Maps](#list-import-maps)
+  - [Create Import](#create-import)
+  - [Update Import](#update-import)
+  - [Destroy Import](#destroy-import)
 - [Activity & Stats](#activity-stats)
-	- [List Activity](#list-activity)
-	- [List Maps Activity](#list-maps-activity)
-	- [List Map Activity](#list-map-activity)
-	- [List User Activity](#list-user-activity)
-	- [User Statistics](#user-statistics)
+  - [List Activity](#list-activity)
+  - [List Maps Activity](#list-maps-activity)
+  - [List Map Activity](#list-map-activity)
+  - [List User Activity](#list-user-activity)
+  - [User Statistics](#user-statistics)
 
 <!-- /TOC -->
 
@@ -81,13 +82,12 @@ Both http and https calls work. If you call a https resource, then links within 
 
 ## Format
 
-Where possible most output formats are in json-api format. Some creation and updating requests also require the json to be in this format. 
+Where possible most output formats are in json-api format. Some creation and updating requests also require the json to be in this format.
 
 ### JSON format
 
-For more infomation about the JSON API format, please consult [http://jsonapi.org/](http://jsonapi.org/). 
+For more infomation about the JSON API format, please consult [http://jsonapi.org/](http://jsonapi.org/).
 Things to watch out for (compared to the previous warper API) the JSON API has `data` as a root array, and the data for each feature are in an `attributes` array. The format also allows the system to include `relationships` (for example, including the layers with each map) and also shows `links` to various resources and contains pagination `meta` information.
-
 
 The GeoJSON is different in structure and also in that it encodes the geometry of features in GeoJSON format. It does not include relations or links or pagination information. For more information about the GeoJSON format see the GeoJSON site. [http://geojson.org/](http://geojson.org/)
 
@@ -103,18 +103,18 @@ Alternatively the API can work via cookie also.
 
 To authenticate using an email and password to retrieve an authentication token.
 
-| Method        | Definition |
-| ------------- | ---------  |
-| POST           | /api/v1/auth/sign_in.json |
+| Method | Definition                |
+| ------ | ------------------------- |
+| POST   | /api/v1/auth/sign_in.json |
 
 **Parameters**
 
 | Name     | Type   | Description          | Required | Notes |
-|----------|--------|----------------------|----------|-------|
+| -------- | ------ | -------------------- | -------- | ----- |
 | email    | string | Email of the user    | required |       |
 | password | string | Password of the user | required |       |
 
-**Curl Example***
+**Curl Example\***
 
 ```
 curl -X POST http://mapwarper.net/api/v1/auth/sign_in.json -H "Content-Type: application/json" -d '{"user":{"email":"user@example.com","password":"userpassword"}}' -v
@@ -122,7 +122,8 @@ curl -X POST http://mapwarper.net/api/v1/auth/sign_in.json -H "Content-Type: app
 
 **Response**
 
-A successful response returns the user as JSON in the data element and the authentication token in a meta element
+A successful response returns the user as JSON in the data element and the authentication token in a meta element.
+Tokens are rotated on every successful sign in, so be sure to store the token returned in the `meta.auth_token` field.
 
 ```
 {
@@ -146,6 +147,7 @@ A successful response returns the user as JSON in the data element and the authe
 ```
 
 if unauthorized returns a 401 status with
+
 ```
 {"error":"Invalid email or password."}
 ```
@@ -155,15 +157,17 @@ if unauthorized returns a 401 status with
 To sign out which deletes the authentication token.
 Authentication is required.
 
-| Method        | Definition |
-| ------------- | ---------  |
-| DELETE           | /api/v1/auth/sign_out.json |
+| Method | Definition                 |
+| ------ | -------------------------- |
+| DELETE | /api/v1/auth/sign_out.json |
 
-
-**Curl Example***
+**Curl Example\***
 
 ```
-curl -X DELETE http://mapwarper.net/api/v1/auth/sign_out.json -H -H 'X-User-Token: longtoken' -H 'X-User-Id: 2' "Content-Type: application/json" -v
+curl -X DELETE http://mapwarper.net/api/v1/auth/sign_out.json \
+	-H "Authorization: Bearer longtoken" \
+	-H "X-User-Id: 2" \
+	-H "Content-Type: application/json" -v
 ```
 
 **Response**
@@ -172,27 +176,30 @@ A successful response returns a 200 OK status and an empty hash `{}`
 
 An unsuccessful response returns a 422 unprocessable entity status and an empty hash `{}`
 
+Signing out also rotates the authentication token, so clients should discard the previous token immediately.
 
 ### Validate Token
 
 This is a call to check if an authentication token is still valid. (Signing in and out both reset tokens)
 
-
-| Method        | Definition |
-| ------------- | ---------  |
-| GET           | /api/v1/auth/validate_token.json |
+| Method | Definition                       |
+| ------ | -------------------------------- |
+| GET    | /api/v1/auth/validate_token.json |
 
 **Parameters**
 
 | Name     | Type   | Description          | Required | Notes |
-|----------|--------|----------------------|----------|-------|
+| -------- | ------ | -------------------- | -------- | ----- |
 | email    | string | Email of the user    | required |       |
 | password | string | Password of the user | required |       |
 
-**Curl Example***
+**Curl Example\***
 
 ```
-curl -X POST http://mapwarper.net/api/v1/auth/sign_in.json -H "Content-Type: application/json" -H 'Accept: application/json' -d '{"user":{"email":"user@example.com","password":"userpassword"}}' -v
+curl -X GET http://mapwarper.net/api/v1/auth/validate_token.json \
+	-H "Authorization: Bearer longtoken" \
+	-H "X-User-Id: 2" \
+	-H "Accept: application/json" -v
 ```
 
 **Response**
@@ -221,49 +228,69 @@ A successful response returns the user as JSON in the data element and the authe
 ```
 
 if unauthorized returns a 401 status with
+
 ```
 {"error":"Invalid email or password."}
 ```
 
 ## Using the authentication token
 
-You can authentication via the token in two ways
+You can authenticate via the token in a few ways:
 
-1. Recommended: setting  `X-User-Id` and `X-User-Token` in the header
+1. Recommended: sending the token as a bearer credential together with the user id header
+
+```
+curl -H 'Authorization: Bearer longtoken' -H 'X-User-Id: 2' \
+	-X GET http://mapwarper.net/api/v1/users/2.json -v
+```
+
+2. Legacy header style using `X-User-Id` and `X-User-Token`
 
 ```
 curl  -H 'X-User-Token: longtoken' -H 'X-User-Id: 2' -X GET http://mapwarper.net/api/v1/users/2.json -v
 ```
 
-2. Passing `user_id` and `user_token` as parameters (handy for GET requests)
+3. Passing `user_id` and `user_token` as parameters (handy for GET requests)
 
 ```
 curl  -X GET http://mapwarper.net/api/v1/users/2.json?user_id=2&user_token=longtoken -v
 
 ```
 
-### Oauth Authenticaton and Authentication Token
+### Token maintenance
 
-Instead of using an email and password, a user can login via OUath with Github, twitter, google, and Wikimedia Commons for example. 
+For existing installations upgrading to Devise-based token authentication, run the rake task below to populate missing tokens:
+
+```
+bundle exec rake users:backfill_tokens
+```
+
+You can achieve the same in the Rails console with:
+
+```
+User.ensure_authentication_tokens!
+```
+
+### OAuth Authentication and Authentication Token
+
+Instead of using an email and password, a user can log in via OAuth with GitHub, Twitter, Google, and Wikimedia Commons for example.
 This is the way a third party JavaScript application can work with OAuth and the warper
 
-> ** Note: The Oauth path is `/u/auth/{:provider}` and not within the api namespace. This may change.
+> \*\* Note: The OAuth path is `/u/auth/{:provider}` and not within the api namespace. This may change.
 
-
-| Method        | Definition |
-| ------------- | ---------  |
-| GET           | /u/auth/{:provider} |
+| Method | Definition          |
+| ------ | ------------------- |
+| GET    | /u/auth/{:provider} |
 
 **Parameters**
 
-| Name     | Type   | Description          | Required | Notes                                              |
-|----------|--------|----------------------|----------|-------                                             |
-| privoder | string | Oauth Provider       | required | one of "github", "mediawiki", "twitter", "osm "etc |
-
+| Name     | Type   | Description    | Required | Notes                                              |
+| -------- | ------ | -------------- | -------- | -------------------------------------------------- |
+| provider | string | OAuth Provider | required | one of "GitHub", "MediaWiki", "Twitter", "OSM" etc |
 
 The process uses the Browser postMessage API to communicate across windows.
 
-See https://github.com/timwaters/warper_oauth_token_auth_demo  for an example app that uses JToker Jquery library for authentication.
+See https://github.com/timwaters/warper_oauth_token_auth_demo for an example app that uses jToker jQuery library for authentication.
 
 Example JS code:
 
@@ -288,7 +315,6 @@ window.addEventListener('message', function(event) {
 }, false);
 ```
 
-
 The warper renders /app/views/devise/omniauth_external_window.erb.html
 
 The following gets rendered when the user successfully allows the request:
@@ -298,9 +324,9 @@ var data;
 window.addEventListener("message", function(ev) {
   if (ev.data === "requestCredentials") {
       data = {
-       message: "deliverCredentials", 
-       auth_token: 'longtoken', 
-       uid: '1234', 
+       message: "deliverCredentials",
+       auth_token: 'longtoken',
+       uid: '1234',
        id: '23',
        name: 'Username',
        email: 'Username@example.com',
@@ -316,8 +342,7 @@ function requestCredentials() {
 }
 ```
 
-Then, using the id and the email from the message, API response can be crafted. See https://github.com/timwaters/warper_oauth_token_auth_demo  for an example app.
-
+Then, using the id and the email from the message, API response can be crafted. See https://github.com/timwaters/warper_oauth_token_auth_demo for an example app.
 
 ### Cookie Authentication
 
@@ -329,7 +354,7 @@ The API can also be authenticated with cookies (for example a user logged into t
 curl -X POST http://mapwarper.net/u/sign_in.json -H "Content-Type: application/json"  -H 'Accept: application/json' -d '{"user":{"email":"tim@example.com","password":"password"}}' -c cookie
 ```
 
-if successful, returns logged in user as jsonapi 
+if successful, returns logged in user as jsonapi
 
 ```
 {
@@ -349,6 +374,7 @@ if successful, returns logged in user as jsonapi
 ```
 
 if unauthorized returns a 401 status with
+
 ```
 {"error":"Invalid email or password."}
 ```
@@ -361,67 +387,64 @@ curl -H 'Content-Type: application/json' -H 'Accept: application/json' -X GET ht
 
 Unauthorized calls may return
 
-| Status        | Response |
-| ------------- | -------- | 
-| 402	(unauthorized) | `{"errors":[{"title":"Unauthorized","detail":"Unauthorized Request"}]}`   |
-
+| Status             | Response                                                                |
+| ------------------ | ----------------------------------------------------------------------- |
+| 402 (unauthorized) | `{"errors":[{"title":"Unauthorized","detail":"Unauthorized Request"}]}` |
 
 ## Search for Maps
 
-| Method        | Definition |
-| ------------- | ---------  |
-| GET           | /api/v1/maps.json?query=london | 
+| Method | Definition                     |
+| ------ | ------------------------------ |
+| GET    | /api/v1/maps.json?query=london |
 
 Returns a list of maps that meet search criteria (where the title or description contains "london")
 No authentication required.
 
 **Parameters**
 
-| Name        | values      | Type    | Description                                                             | Required | Notes                                             |
-|-------------|-------------|---------|-------------------------------------------------------------------------|----------|---------------------------------------------------|
-| query       |             | string  | search query                                                            | optional |                                                   |
-| field       |             | string  | specified field to be searched                                          | optional | default is title                                  |
-|             | title       | string  | the title of the map                                                    | optional | default                                           |
-|             | description | string  | the description of the map                                              | optional |                                                   |
-|             | publisher   | string  | the publisher                                                           | optional |                                                   |
-|             | author      | string  | the author of the map                                                   | optional |                                                   |
-|             | status      | string  | the status                                                              | optional |                                                   |
-| sort_key    |             |         | the field that should be used to sort the results                       | optional | default is updated_at                             |
-|             | title       | string  | the title of the map                                                    | optional |                                                   |
-|             | updated_at  | string  | when the map was last updated                                           | optional | default                                           |
-|             | created_at  | string  | when the map was created                                                | optional |                                                   |
-|             | status      | string  | the status of the map                                                   | optional | ordered by integer (see below)                    |
-| sort_order  |             | string  | the order in which the results should appear                            | optional | default is desc                                   |
-|             | asc         |         | ascending order                                                         | optional |                                                   |
-|             | desc        |         | descending order                                                        | optional | default                                           |
-| show_warped |             | integer | limits to maps that have already been warped                            | optional |                                                   |
-|             | 1           | integer | limits to maps that have already been warped                            | optional |                                                   |
-|             | 0           | integer | gets all maps, warped and unwarped                                      | optional | default                                           |
-| format      |             | string  | specifies output format                                                 | optional | can also be passed in as extension, eg. maps.json |
-|             | json        | string  | JSON format for maps                                                    | optional | default                                           |
-|             | geojson     | string  | GeoJSON format for maps                                                 | optional | simple array, not featurecollection               |
-| page        |             | integer | the page number; use to get the next or previous page of search results | optional |                                                   |
-| per_page    |             | integer | number of results per page                                              | optional | default is 50                                     |
-| bbox	      | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic area to which the search should be limited | optional |
-| operation   |             | string  | specifies how to apply the bounding box  | optional  | default is intersect |
-|             | intersect   | string  |uses the PostGIS ST_Intersects operation to retrieve warped maps whose extents intersect with the bbox parameter  | optional | preferred; orders results by proximity to the bbox extent; default |
-|             | within      | string	| uses a PostGIS ST_Within operation to retrieve warped maps that fall entirely within the extent of the bbox parameter  | optional      |  |
- 
+| Name        | values                                                         | Type                                                                              | Description                                                                                                           | Required | Notes                                                              |
+| ----------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
+| query       |                                                                | string                                                                            | search query                                                                                                          | optional |                                                                    |
+| field       |                                                                | string                                                                            | specified field to be searched                                                                                        | optional | default is title                                                   |
+|             | title                                                          | string                                                                            | the title of the map                                                                                                  | optional | default                                                            |
+|             | description                                                    | string                                                                            | the description of the map                                                                                            | optional |                                                                    |
+|             | publisher                                                      | string                                                                            | the publisher                                                                                                         | optional |                                                                    |
+|             | author                                                         | string                                                                            | the author of the map                                                                                                 | optional |                                                                    |
+|             | status                                                         | string                                                                            | the status                                                                                                            | optional |                                                                    |
+| sort_key    |                                                                |                                                                                   | the field that should be used to sort the results                                                                     | optional | default is updated_at                                              |
+|             | title                                                          | string                                                                            | the title of the map                                                                                                  | optional |                                                                    |
+|             | updated_at                                                     | string                                                                            | when the map was last updated                                                                                         | optional | default                                                            |
+|             | created_at                                                     | string                                                                            | when the map was created                                                                                              | optional |                                                                    |
+|             | status                                                         | string                                                                            | the status of the map                                                                                                 | optional | ordered by integer (see below)                                     |
+| sort_order  |                                                                | string                                                                            | the order in which the results should appear                                                                          | optional | default is desc                                                    |
+|             | asc                                                            |                                                                                   | ascending order                                                                                                       | optional |                                                                    |
+|             | desc                                                           |                                                                                   | descending order                                                                                                      | optional | default                                                            |
+| show_warped |                                                                | integer                                                                           | limits to maps that have already been warped                                                                          | optional |                                                                    |
+|             | 1                                                              | integer                                                                           | limits to maps that have already been warped                                                                          | optional |                                                                    |
+|             | 0                                                              | integer                                                                           | gets all maps, warped and unwarped                                                                                    | optional | default                                                            |
+| format      |                                                                | string                                                                            | specifies output format                                                                                               | optional | can also be passed in as extension, eg. maps.json                  |
+|             | json                                                           | string                                                                            | JSON format for maps                                                                                                  | optional | default                                                            |
+|             | geojson                                                        | string                                                                            | GeoJSON format for maps                                                                                               | optional | simple array, not featurecollection                                |
+| page        |                                                                | integer                                                                           | the page number; use to get the next or previous page of search results                                               | optional |                                                                    |
+| per_page    |                                                                | integer                                                                           | number of results per page                                                                                            | optional | default is 50                                                      |
+| bbox        | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic area to which the search should be limited | optional                                                                                                              |
+| operation   |                                                                | string                                                                            | specifies how to apply the bounding box                                                                               | optional | default is intersect                                               |
+|             | intersect                                                      | string                                                                            | uses the PostGIS ST_Intersects operation to retrieve warped maps whose extents intersect with the bbox parameter      | optional | preferred; orders results by proximity to the bbox extent; default |
+|             | within                                                         | string                                                                            | uses a PostGIS ST_Within operation to retrieve warped maps that fall entirely within the extent of the bbox parameter | optional |                                                                    |
 
-Notes: Enter optional text for the query, based on the search field chosen. The query text is case insensitive. This is a simple exact string text search. For example, a search for "city New York" returns no results, but a search for "city of New York" returns 22.  bbox format is y.min(lon min),x.min(lat min),y.max(lon max), x.max(lat max)
-
-
+Notes: Enter optional text for the query, based on the search field chosen. The query text is case insensitive. This is a simple exact string text search. For example, a search for "city New York" returns no results, but a search for "city of New York" returns 22. bbox format is y.min(lon min),x.min(lat min),y.max(lon max), x.max(lat max)
 
 **Example json format**
+
 ```
 curl -H 'Content-Type: application/json' -H 'Accept: application/json' -X GET 'http://mapwarper.net/api/v1/maps?field=title&query=Tartu&sort_key=updated_at&sort_order=desc&show_warped=1'
 ```
+
 [http://mapwarper.net/api/v1/maps?field=title&query=Tartu&sort_key=updated_at&sort_order=desc&show_warped=1](http://mapwarper.net/maps?api/v1/maps?field=title&query=Tartu&sort_key=updated_at&sort_order=desc&show_warped=1)
 
 Example searching within a bounding box
 
 [http://mapwarper.net/api/v1/maps?field=title&query=Tartu&sort_key=updated_at&sort_order=desc&show_warped=1](http://mapwarper.net/maps?api/v1/maps?field=title&query=Tartu&sort_key=updated_at&sort_order=desc&bbox=-75.9831134505588,38.552727388127,-73.9526411829395,40.4029389105122)
-
 
 **Response**
 
@@ -510,23 +533,22 @@ JSON API Format
 }
 ```
 
-
 **Response Elements**
 
-***Data***
+**_Data_**
 
 An array of maps, each having an attributes object and, id and type and links
 
-| Name          |    Value	   | Description                    	| Notes |  
-| ------| -------     |------| -------     |
-| id            |               | The id for the map             |       |  
-| type          |    maps       | the type of resource            |      |  
-| links         |               | links to the resource, and export links |   |   
-| attributes    |               | Attributes of the map | see separate table for more detail   |  
-| relationships | layers, added_by | the layers that the map belongs to and the user that uploaded it | (see included) |  
-| included      |               | Details about the layers  |   |   
+| Name          | Value            | Description                                                      | Notes                              |
+| ------------- | ---------------- | ---------------------------------------------------------------- | ---------------------------------- |
+| id            |                  | The id for the map                                               |                                    |
+| type          | maps             | the type of resource                                             |                                    |
+| links         |                  | links to the resource, and export links                          |                                    |
+| attributes    |                  | Attributes of the map                                            | see separate table for more detail |
+| relationships | layers, added_by | the layers that the map belongs to and the user that uploaded it | (see included)                     |
+| included      |                  | Details about the layers                                         |                                    |
 
-***Links***
+**_Links_**
 
 The top level links holds pagination links
 
@@ -538,13 +560,13 @@ The top level links holds pagination links
 },
 ```
 
-| Value | Description |
-| ------| -------     |
-| self | the link to the current page |
-| next |  the next page in the sequence |
-| last |  the last page in the sequence of pages |
+| Value | Description                            |
+| ----- | -------------------------------------- |
+| self  | the link to the current page           |
+| next  | the next page in the sequence          |
+| last  | the last page in the sequence of pages |
 
-***Meta***
+**_Meta_**
 
 Useful in pagination. Will show the total number of results, for example if the request is limited to returning 25 maps:
 
@@ -554,69 +576,67 @@ Useful in pagination. Will show the total number of results, for example if the 
   "total_pages": 2
 }
 ```
+
 indicates that 50 results have been found over 2 pages.
 
-| Value | Description |
-| ------| -------     |
+| Value         | Description                                     |
+| ------------- | ----------------------------------------------- |
 | total_entries | the total number of maps found for this request |
-| total_pages |  the total number of pages found |
+| total_pages   | the total number of pages found                 |
 
-***Map Links***
+**_Map Links_**
 
-| Value | Description |
-| ------| -------     |
-| gcps_csv| CSV for the control points |
-| mask |  the GML clipping mask |
-| geotiff | The export GeoTiff url |
-| png |The export PNG url |
-| aux_xml | The export PNG XML url |
-| kml | The export KML url |
-| tiles | The Tiles template |
-| wms | The WMS getCapabilities endpoint |  
-| thumb | The path to the thumbnail image |
+| Value    | Description                      |
+| -------- | -------------------------------- |
+| gcps_csv | CSV for the control points       |
+| mask     | the GML clipping mask            |
+| geotiff  | The export GeoTiff url           |
+| png      | The export PNG url               |
+| aux_xml  | The export PNG XML url           |
+| kml      | The export KML url               |
+| tiles    | The Tiles template               |
+| wms      | The WMS getCapabilities endpoint |
+| thumb    | The path to the thumbnail image  |
 
- 
-***Attributes***
+**_Attributes_**
 
-| Name          | Type     | Value     | Description                                                        | Notes              |   
-|---------------|----------|-----------|--------------------------------------------------------------------|--------------------|  
-| status        | string   |           | the status of the map                                              |                    |   
-|               |          | unloaded  | the map has not been loaded                                        |                    |   
-|               |          | loading   | the master image is being requested from the NYPL repository       |                    |   
-|               |          | available | the map has been copied and is ready to be warped                  |                    |   
-|               |          | warping   | the map is undergoing the warping process                          |                    |   
-|               |          | warped    | the map has been warped                                            |                    |   
-|               |          | published | this status is set when the map should no longer be edited         |                    |   
-| map_type      | string   |           | indicates whether the image is of a map or another type of content |                    |   
-|               |          | index     | indicates a map index or overview map                              |                    |   
-|               |          | is_map    | indicates a map                                                    | default            |   
-|               |          | not_map   | indicates non-map content, such as a plate depicting sea monsters  |                    |   
-| updated_at    | datetime |           | when the map was last updated                                      |                    |   
-| created_at    | datetime |           | when the map was first created                                     |                    |   
-| title         | string   |           | the title of the map                                               |                    |   
-| description   | string   |           | the description of the map                                         |                    |   
-| height        | integer  |           | the height of an unwarped map                                      |                    |   
-| width         | integer  |           | the width of an unwarped map                                       |                    |   
-| mask_status   | string   |           | the status of the mask                                             |                    |   
-|               |          | unmasked  | the map has not been masked                                        |                    |   
-|               |          | masking   | the map is undergoing the masking process                          |                    |   
-|               |          | masked    | the map has been masked                                            |                    |   
-| source_uri    | string   |           | the URI to the source map page                                     | e.g. the wiki page |   
-| unique_id     | string   |           | the image filename taken from the source image                     |                    |   
-| date_depicted | string   |           | string representation of the date that the map depicts             |                    |   
-| bbox	        | comma-separated string of lat & lon coords |  | a rectangle delineating the geographic area to which the search should be limited |  |  
-
-
-
+| Name          | Type                                       | Value     | Description                                                                       | Notes              |
+| ------------- | ------------------------------------------ | --------- | --------------------------------------------------------------------------------- | ------------------ |
+| status        | string                                     |           | the status of the map                                                             |                    |
+|               |                                            | unloaded  | the map has not been loaded                                                       |                    |
+|               |                                            | loading   | the master image is being requested from the NYPL repository                      |                    |
+|               |                                            | available | the map has been copied and is ready to be warped                                 |                    |
+|               |                                            | warping   | the map is undergoing the warping process                                         |                    |
+|               |                                            | warped    | the map has been warped                                                           |                    |
+|               |                                            | published | this status is set when the map should no longer be edited                        |                    |
+| map_type      | string                                     |           | indicates whether the image is of a map or another type of content                |                    |
+|               |                                            | index     | indicates a map index or overview map                                             |                    |
+|               |                                            | is_map    | indicates a map                                                                   | default            |
+|               |                                            | not_map   | indicates non-map content, such as a plate depicting sea monsters                 |                    |
+| updated_at    | datetime                                   |           | when the map was last updated                                                     |                    |
+| created_at    | datetime                                   |           | when the map was first created                                                    |                    |
+| title         | string                                     |           | the title of the map                                                              |                    |
+| description   | string                                     |           | the description of the map                                                        |                    |
+| height        | integer                                    |           | the height of an unwarped map                                                     |                    |
+| width         | integer                                    |           | the width of an unwarped map                                                      |                    |
+| mask_status   | string                                     |           | the status of the mask                                                            |                    |
+|               |                                            | unmasked  | the map has not been masked                                                       |                    |
+|               |                                            | masking   | the map is undergoing the masking process                                         |                    |
+|               |                                            | masked    | the map has been masked                                                           |                    |
+| source_uri    | string                                     |           | the URI to the source map page                                                    | e.g. the wiki page |
+| unique_id     | string                                     |           | the image filename taken from the source image                                    |                    |
+| date_depicted | string                                     |           | string representation of the date that the map depicts                            |                    |
+| bbox          | comma-separated string of lat & lon coords |           | a rectangle delineating the geographic area to which the search should be limited |                    |
 
 **Example geojson format**
 
 ```
 curl -H 'Content-Type: application/json' -H 'Accept: application/json' -X GET 'http://mapwarper.net/api/v1/maps?field=title&query=Tartu&sort_key=updated_at&sort_order=desc&show_warped=1&format=geojson'
 ```
+
 [http://mapwarper.net/api/v1/maps.geojson?field=title&query=Tartu&sort_key=updated_at&sort_order=desc&show_warped=1](http://mapwarper.net/maps?api/v1/maps.geojson?field=title&query=Tartu&sort_key=updated_at&sort_order=desc&show_warped=1)
 
-***Response***
+**_Response_**
 
 ```
 [{
@@ -639,26 +659,23 @@ curl -H 'Content-Type: application/json' -H 'Accept: application/json' -X GET 'h
 }]
 ```
 
-
 ### Get a Map
 
-| Method        | Definition    |
-| ------------- | ------------- |
-| GET           | /api/v1/maps/{:id}.{:format} or     | 
-|               | /api/v1/maps/{:id}?format={:format} |
+| Method | Definition                          |
+| ------ | ----------------------------------- |
+| GET    | /api/v1/maps/{:id}.{:format} or     |
+|        | /api/v1/maps/{:id}?format={:format} |
 
 Returns a map by ID.
 No authentication required.
 
 **Parameters**
 
- 
-| Name          |              | Type         | Description					                | Required    | Notes |   
-| ------        | -------     | ------        | -------                             |  -------     |  -------  |
-| id  		      |              | integer 	     | the unique identifier for a map    | required		  |       |
-| format  		  |              | string 	     | specifies output format            | optional		  | default JSON  |
-|               | json / geojson |             | use to specify JSON output formart  | optional |  |
-
+| Name   |                | Type    | Description                        | Required | Notes        |
+| ------ | -------------- | ------- | ---------------------------------- | -------- | ------------ |
+| id     |                | integer | the unique identifier for a map    | required |              |
+| format |                | string  | specifies output format            | optional | default JSON |
+|        | json / geojson |         | use to specify JSON output formart | optional |              |
 
 **Response**
 
@@ -752,87 +769,82 @@ GeoJSON Format
 
 **Response Elements**
 
-***Data***
+**_Data_**
 
+| Name          | Value            | Description                                                      | Notes                              |
+| ------------- | ---------------- | ---------------------------------------------------------------- | ---------------------------------- |
+| id            |                  | The id for the map                                               |                                    |
+| type          | maps             | the type of resource                                             |                                    |
+| links         |                  | links to the resource, and export links                          |                                    |
+| attributes    |                  | Attributes of the map                                            | see separate table for more detail |
+| relationships | layers, added_by | the layers that the map belongs to and the user that uploaded it | (see included)                     |
+| included      |                  | Details about the layers                                         |                                    |
 
-| Name          | Value            | Description                                                      | Notes                              |   
-|---------------|------------------|------------------------------------------------------------------|------------------------------------| 
-| id            |                  | The id for the map                                               |                                    |   
-| type          | maps             | the type of resource                                             |                                    |   
-| links         |                  | links to the resource, and export links                          |                                    |   
-| attributes    |                  | Attributes of the map                                            | see separate table for more detail |   
-| relationships | layers, added_by | the layers that the map belongs to and the user that uploaded it | (see included)                     |   
-| included      |                  | Details about the layers                                         |                                    |   
+**_Map Links_**
 
+| Value    | Description                           |
+| -------- | ------------------------------------- |
+| gcps_csv | CSV for the control points            |
+| mask     | the GML clipping mask                 |
+| geotiff  | The export GeoTiff url                |
+| png      | The export PNG url                    |
+| aux_xml  | The export PNG XML url                |
+| kml      | The export KML url                    |
+| tiles    | The Tiles template                    |
+| wms      | The WMS getCapabilities endpoint      |
+| thumb    | The path to the thumbnail for the map |
 
-***Map Links***
+**_Attributes_**
 
-| Value | Description |
-| ------| -------     |
-| gcps_csv| CSV for the control points |
-| mask |  the GML clipping mask |
-| geotiff | The export GeoTiff url |
-| png |The export PNG url |
-| aux_xml | The export PNG XML url |
-| kml | The export KML url |
-| tiles | The Tiles template |
-| wms | The WMS getCapabilities endpoint | 
-| thumb | The path to the thumbnail for the map | 
-
-***Attributes***
-
-| Name          | Type     | Value     | Description                                                        | Notes              |   
-|---------------|----------|-----------|--------------------------------------------------------------------|--------------------|  
-| status        | string   |           | the status of the map                                              |                    |   
-|               |          | unloaded  | the map has not been loaded                                        |                    |   
-|               |          | loading   | the master image is being requested from the NYPL repository       |                    |   
-|               |          | available | the map has been copied and is ready to be warped                  |                    |   
-|               |          | warping   | the map is undergoing the warping process                          |                    |   
-|               |          | warped    | the map has been warped                                            |                    |   
-|               |          | published | this status is set when the map should no longer be edited         |                    |   
-| map_type      | string   |           | indicates whether the image is of a map or another type of content |                    |   
-|               |          | index     | indicates a map index or overview map                              |                    |   
-|               |          | is_map    | indicates a map                                                    | default            |   
-|               |          | not_map   | indicates non-map content, such as a plate depicting sea monsters  |                    |   
-| updated_at    | datetime |           | when the map was last updated                                      |                    |   
-| created_at    | datetime |           | when the map was first created                                     |                    |   
-| title         | string   |           | the title of the map                                               |                    |   
-| description   | string   |           | the description of the map                                         |                    |   
-| height        | integer  |           | the height of an unwarped map                                      |                    |   
-| width         | integer  |           | the width of an unwarped map                                       |                    |   
-| mask_status   | string   |           | the status of the mask                                             |                    |   
-|               |          | unmasked  | the map has not been masked                                        |                    |   
-|               |          | masking   | the map is undergoing the masking process                          |                    |   
-|               |          | masked    | the map has been masked                                            |                    |   
-| source_uri    | string   |           | the URI to the source map page                                     | e.g. the wiki page |   
-| unique_id     | string   |           | the image filename taken from the source image                     |                    |   
-| date_depicted | string   |           | string representation of the date that the map depicts             |                    |   
-| bbox	        | comma-separated string of lat & lon coords |  | a rectangle delineating the geographic area to which the search should be limited |  |  
-
-
-
+| Name          | Type                                       | Value     | Description                                                                       | Notes              |
+| ------------- | ------------------------------------------ | --------- | --------------------------------------------------------------------------------- | ------------------ |
+| status        | string                                     |           | the status of the map                                                             |                    |
+|               |                                            | unloaded  | the map has not been loaded                                                       |                    |
+|               |                                            | loading   | the master image is being requested from the NYPL repository                      |                    |
+|               |                                            | available | the map has been copied and is ready to be warped                                 |                    |
+|               |                                            | warping   | the map is undergoing the warping process                                         |                    |
+|               |                                            | warped    | the map has been warped                                                           |                    |
+|               |                                            | published | this status is set when the map should no longer be edited                        |                    |
+| map_type      | string                                     |           | indicates whether the image is of a map or another type of content                |                    |
+|               |                                            | index     | indicates a map index or overview map                                             |                    |
+|               |                                            | is_map    | indicates a map                                                                   | default            |
+|               |                                            | not_map   | indicates non-map content, such as a plate depicting sea monsters                 |                    |
+| updated_at    | datetime                                   |           | when the map was last updated                                                     |                    |
+| created_at    | datetime                                   |           | when the map was first created                                                    |                    |
+| title         | string                                     |           | the title of the map                                                              |                    |
+| description   | string                                     |           | the description of the map                                                        |                    |
+| height        | integer                                    |           | the height of an unwarped map                                                     |                    |
+| width         | integer                                    |           | the width of an unwarped map                                                      |                    |
+| mask_status   | string                                     |           | the status of the mask                                                            |                    |
+|               |                                            | unmasked  | the map has not been masked                                                       |                    |
+|               |                                            | masking   | the map is undergoing the masking process                                         |                    |
+|               |                                            | masked    | the map has been masked                                                           |                    |
+| source_uri    | string                                     |           | the URI to the source map page                                                    | e.g. the wiki page |
+| unique_id     | string                                     |           | the image filename taken from the source image                                    |                    |
+| date_depicted | string                                     |           | string representation of the date that the map depicts                            |                    |
+| bbox          | comma-separated string of lat & lon coords |           | a rectangle delineating the geographic area to which the search should be limited |                    |
 
 **Not Found Error**
 
 If the map is not found, the request will return the following response.
 
-| Status        | Response |
-| ------------- |----------| 
-| 404	(not found)| ```{"errors":[{"title":"Not found","detail":"Couldn't find Map with 'id'=2222"}]}```    |
+| Status          | Response                                                                         |
+| --------------- | -------------------------------------------------------------------------------- |
+| 404 (not found) | `{"errors":[{"title":"Not found","detail":"Couldn't find Map with 'id'=2222"}]}` |
 
 ### Get a Map's Status
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          |  /api/v1/maps/{:id}/status |
+| Method | Definition                |
+| ------ | ------------------------- |
+| GET    | /api/v1/maps/{:id}/status |
 
 Returns a map's status. This request is used to poll a maps status while it is being transfered from the wiki image server to the map server.
 
 **Parameters**
 
-| Name      	    |  Type      | Description  |  Required | 
-| -------------  | ---------- | ------------ |  -------- | 
-|   id     		  | integer    | the unique identifier for the map   | required |
+| Name | Type    | Description                       | Required |
+| ---- | ------- | --------------------------------- | -------- |
+| id   | integer | the unique identifier for the map | required |
 
 **Request Example**
 
@@ -840,65 +852,62 @@ Returns a map's status. This request is used to poll a maps status while it is b
 
 **Response**
 
-This request returns text. If a map has no status (i.e., has not been transferred yet), this request will return the status "loading." While the request usually takes a few seconds, it could take several. 
+This request returns text. If a map has no status (i.e., has not been transferred yet), this request will return the status "loading." While the request usually takes a few seconds, it could take several.
 
 **Response Elements**
 
-| Name        	 | Type		   | Value		| Description					                  | Notes |
-| ------        | -------     | ------   | -------                             |  -------     | 
-| status	       | string	   | 	      | the status of the map             |       |
-| 	             | 	         | unloaded	| the map has not been loaded					    |
-| 		            |		       | loading 	| the master image is being requested from the NYPL repository	| |
-| 		            | 		     | available| the map has been copied, and is ready to be warped	|   |
-| 		            | 		     |  warping	| the map is undergoing the warping process			|  |
-| 		            | 		     |  warped	| the map has been warped					  |       |
-| 		            | 		     |  published	| this status is set when the map should no longer be edited | |
+| Name   | Type   | Value     | Description                                                  | Notes |
+| ------ | ------ | --------- | ------------------------------------------------------------ | ----- |
+| status | string |           | the status of the map                                        |       |
+|        |        | unloaded  | the map has not been loaded                                  |
+|        |        | loading   | the master image is being requested from the NYPL repository |       |
+|        |        | available | the map has been copied, and is ready to be warped           |       |
+|        |        | warping   | the map is undergoing the warping process                    |       |
+|        |        | warped    | the map has been warped                                      |       |
+|        |        | published | this status is set when the map should no longer be edited   |       |
 
-
-------------------------------
+---
 
 ## Layers
 
 A layer is a mosaic in which the component maps are stitched together and displayed as one seamless map. Layers are often comprised of contiguous maps from the facing pages of a scanned book. For examples of layers, see the [Plan of the town of Paramaribo, capital of Surinam](http://maps.nypl.org/warper/layers/1450) or the map of New York City and Vicinity at [http://maps.nypl.org/warper/layers/1404](http://maps.nypl.org/warper/layers/1404).
 No authentication required.
 
-> ** Note: in the mapwarper application Layers are often called "Mosaics"
+> \*\* Note: in the mapwarper application Layers are often called "Mosaics"
 
 ### Query or List Layers
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          | /api/v1/layers |
+| Method | Definition     |
+| ------ | -------------- |
+| GET    | /api/v1/layers |
 
 **Parameters**
 
-| Name       | values      | Type    | Description                                                             | Required | Notes                                             |
-|------------|-------------|---------|-------------------------------------------------------------------------|----------|---------------------------------------------------|
-| query      |             | string  | search query                                                            | optional |                                                   |
-| field      |             | string  | specified field to be searched                                          | optional | default is title                                  |
-|            | name        | string  | the title of the layer                                                  | optional | default                                           |
-|            | description | string  | the description of the layer                                            | optional |                                                   |
-| sort_key   |             |         | the field that should be used to sort the results                       | optional | default is updated_at                             |
-|            | name        | string  | the name of the layer                                                   | optional |                                                   |
-|            | updated_at  | string  | when the layer was last updated                                         | optional | default                                           |
-|            | created_at  | string  | when the layer was created                                              | optional |                                                   |
-|            | percent     | string  | the percent of maps which are rectified in the layer                    | optional | ordered by integer (see below)                    |
-| sort_order |             | string  | the order in which the results should appear                            | optional | default is desc                                   |
-|            | asc         |         | ascending order                                                         | optional |                                                   |
-|            | desc        |         | descending order                                                        | optional | default                                           |
-| format     |             | string  | specifies output format                                                 | optional | can also be passed in as extension, eg. maps.json |
-|            | json        | string  | JSON format for layer                                                   | optional | default                                           |
-|            | geojson     | string  | GeoJSON format for layer                                                | optional | simple array, not featurecollection               |
-| page       |             | integer | the page number; use to get the next or previous page of search results | optional |                                                   |
-| per_page   |             | integer | number of results per page                                              | optional | default is 50                                     |
-| bbox	     | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic area to which the search should be limited | optional |  |  
-| operation  |           | string       | specifies how to apply the bounding box  | optional  | default is intersect |
-|            | intersect | string       |uses the PostGIS ST_Intersects operation to retrieve warped maps whose extents intersect with the bbox parameter  | optional | preferred; orders results by proximity to the bbox extent; default |
-|            | within    | string	      | uses a PostGIS ST_Within operation to retrieve warped maps that fall entirely within the extent of the bbox parameter  | optional      |   |  
- 
+| Name       | values                                                         | Type                                                                              | Description                                                                                                           | Required | Notes                                                              |
+| ---------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
+| query      |                                                                | string                                                                            | search query                                                                                                          | optional |                                                                    |
+| field      |                                                                | string                                                                            | specified field to be searched                                                                                        | optional | default is title                                                   |
+|            | name                                                           | string                                                                            | the title of the layer                                                                                                | optional | default                                                            |
+|            | description                                                    | string                                                                            | the description of the layer                                                                                          | optional |                                                                    |
+| sort_key   |                                                                |                                                                                   | the field that should be used to sort the results                                                                     | optional | default is updated_at                                              |
+|            | name                                                           | string                                                                            | the name of the layer                                                                                                 | optional |                                                                    |
+|            | updated_at                                                     | string                                                                            | when the layer was last updated                                                                                       | optional | default                                                            |
+|            | created_at                                                     | string                                                                            | when the layer was created                                                                                            | optional |                                                                    |
+|            | percent                                                        | string                                                                            | the percent of maps which are rectified in the layer                                                                  | optional | ordered by integer (see below)                                     |
+| sort_order |                                                                | string                                                                            | the order in which the results should appear                                                                          | optional | default is desc                                                    |
+|            | asc                                                            |                                                                                   | ascending order                                                                                                       | optional |                                                                    |
+|            | desc                                                           |                                                                                   | descending order                                                                                                      | optional | default                                                            |
+| format     |                                                                | string                                                                            | specifies output format                                                                                               | optional | can also be passed in as extension, eg. maps.json                  |
+|            | json                                                           | string                                                                            | JSON format for layer                                                                                                 | optional | default                                                            |
+|            | geojson                                                        | string                                                                            | GeoJSON format for layer                                                                                              | optional | simple array, not featurecollection                                |
+| page       |                                                                | integer                                                                           | the page number; use to get the next or previous page of search results                                               | optional |                                                                    |
+| per_page   |                                                                | integer                                                                           | number of results per page                                                                                            | optional | default is 50                                                      |
+| bbox       | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic area to which the search should be limited | optional                                                                                                              |          |
+| operation  |                                                                | string                                                                            | specifies how to apply the bounding box                                                                               | optional | default is intersect                                               |
+|            | intersect                                                      | string                                                                            | uses the PostGIS ST_Intersects operation to retrieve warped maps whose extents intersect with the bbox parameter      | optional | preferred; orders results by proximity to the bbox extent; default |
+|            | within                                                         | string                                                                            | uses a PostGIS ST_Within operation to retrieve warped maps that fall entirely within the extent of the bbox parameter | optional |                                                                    |
 
 Notes: Enter optional text for the query, based on the search field chosen. The query text is case insensitive. This is a simple exact string text search. For example, a search for "city New York" returns no results, but a search for "city of New York" returns 22. bbox format is y.min(lon min),x.min(lat min),y.max(lon max), x.max(lat max)
-
 
 **Request Example**
 
@@ -954,21 +963,19 @@ Notes: Enter optional text for the query, based on the search field chosen. The 
 
 **Response Elements**
 
-
-***Data***
+**_Data_**
 
 An array of matching layers, each having an attributes object and, id and type and links
 
-| Name          |    Value	   | Description                    	| Notes |  
-| ------| -------     |------| -------     |
-| id            |               | The id for the layer             |       |  
-| type          |    layers       | the type of resource            |      |  
-| links         |               | links to the resource, and export links |   |   
-| attributes    |               | Attributes of the layer | see separate table for more detail   |  
-| relationships | maps  | the maps that the layer has  | (see getting a layers maps) |   
+| Name          | Value  | Description                             | Notes                              |
+| ------------- | ------ | --------------------------------------- | ---------------------------------- |
+| id            |        | The id for the layer                    |                                    |
+| type          | layers | the type of resource                    |                                    |
+| links         |        | links to the resource, and export links |                                    |
+| attributes    |        | Attributes of the layer                 | see separate table for more detail |
+| relationships | maps   | the maps that the layer has             | (see getting a layers maps)        |
 
-
-***Links***
+**_Links_**
 
 The top level links holds pagination links. Shown if there are more results than are contained in the response.
 
@@ -980,13 +987,13 @@ The top level links holds pagination links. Shown if there are more results than
 },
 ```
 
-| Value | Description |
-| ------| -------     |
-| self | the link to the current page |
-| next |  the next page in the sequence |
-| last |  the last page in the sequence of pages |
+| Value | Description                            |
+| ----- | -------------------------------------- |
+| self  | the link to the current page           |
+| next  | the next page in the sequence          |
+| last  | the last page in the sequence of pages |
 
-***Meta***
+**_Meta_**
 
 Useful in pagination. Will show the total number of results, for example if the request is limited to returning 25 maps, Shown if there are more results than are contained in the response.
 
@@ -996,60 +1003,58 @@ Useful in pagination. Will show the total number of results, for example if the 
   "total_pages": 2
 }
 ```
+
 indicates that 50 results have been found over 2 pages.
 
-| Value | Description |
-| ------| -------     |
+| Value         | Description                                       |
+| ------------- | ------------------------------------------------- |
 | total_entries | the total number of layers found for this request |
-| total_pages |  the total number of pages found |
+| total_pages   | the total number of pages found                   |
 
+**_Layer Links_**
 
-***Layer Links***
+| Value | Description                      |
+| ----- | -------------------------------- |
+| self  | the API link to the resourece    |
+| kml   | The export KML url               |
+| tiles | The Tiles template               |
+| wms   | The WMS getCapabilities endpoint |
 
-| Value | Description |
-| ------| -------     |
-| self  | the API link to the resourece |
-| kml | The export KML url |
-| tiles | The Tiles template |
-| wms | The WMS getCapabilities endpoint |  
+**_Attributes_**
 
-***Attributes***
-
-| Name               | Type        | Description           	| Notes |  
-| ------| -------     |------| -------     |
-| name               | string      | the title of the layer |  |
-| description        | string      |  description of layer  |  |
-| is_visible          | boolean/string		   | if false, usually indicates a meta-layer or collection of atlases | these meta-layers will not have WMSs   |
-| maps_count        | integer   | how many maps a layer has, as opposed to title pages, plates, and other non-map content	| defines a map using the map_type => is_map variable    |
-| rectified_maps_count    | integer   | how many maps in the layer are warped	|    |
-| rectified_percent  | integer | the percentage of maps that are warped    |  |
-| bbox	              | a comma-separated string of latitude and longitude coordinates   | a rectangle delineating the geographic footprint of the layer 		|     | 
-| source_uri         | string | the URI to the source layer page  | e.g. the Wiki Category that the layer/mosaic represents |
-| created_at		      | date, time, & time zone 	|		when the layer was created in the system		|    |
-| updated_at         | date, time, & time zone  | when the layer was last updated |  |
-
+| Name                 | Type                                                           | Description                                                                             | Notes                                                   |
+| -------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| name                 | string                                                         | the title of the layer                                                                  |                                                         |
+| description          | string                                                         | description of layer                                                                    |                                                         |
+| is_visible           | boolean/string                                                 | if false, usually indicates a meta-layer or collection of atlases                       | these meta-layers will not have WMSs                    |
+| maps_count           | integer                                                        | how many maps a layer has, as opposed to title pages, plates, and other non-map content | defines a map using the map_type => is_map variable     |
+| rectified_maps_count | integer                                                        | how many maps in the layer are warped                                                   |                                                         |
+| rectified_percent    | integer                                                        | the percentage of maps that are warped                                                  |                                                         |
+| bbox                 | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic footprint of the layer                           |                                                         |
+| source_uri           | string                                                         | the URI to the source layer page                                                        | e.g. the Wiki Category that the layer/mosaic represents |
+| created_at           | date, time, & time zone                                        | when the layer was created in the system                                                |                                                         |
+| updated_at           | date, time, & time zone                                        | when the layer was last updated                                                         |                                                         |
 
 ### Get Layer
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          |  /api/v1/layers/{:id} or |
-|              |  /api/v1/layers/{:id}.json |
+| Method | Definition                |
+| ------ | ------------------------- |
+| GET    | /api/v1/layers/{:id} or   |
+|        | /api/v1/layers/{:id}.json |
 
 Returns a single layer.
 
 **Parameters**
 
-| Name          |             | Type      | Description | Required  | Notes     |
-| ------------- | ----------  | --------  | ----------  | --------- | --------- |
-| id      |             | integer        | the unique identifier for the layer   |  required   |                 |
-| format        |             | string    | specifies output format               |  optional   | default is json |
-|               | json or geosjon    |           |           | optional |      |
+| Name   |                 | Type    | Description                         | Required | Notes           |
+| ------ | --------------- | ------- | ----------------------------------- | -------- | --------------- |
+| id     |                 | integer | the unique identifier for the layer | required |                 |
+| format |                 | string  | specifies output format             | optional | default is json |
+|        | json or geosjon |         |                                     | optional |                 |
 
 **Request Examples**
 
-[http://mapwarper.net/api/v1/layers/2](http://mapwarper.net/api/v1/layers/2) 
-
+[http://mapwarper.net/api/v1/layers/2](http://mapwarper.net/api/v1/layers/2)
 
 **Response**
 
@@ -1090,59 +1095,54 @@ Returns a single layer.
 	}
 }
 ```
+
 **Response Elements**
 
-***Data***
+**_Data_**
 
+| Name          | Value            | Description                             | Notes                              |
+| ------------- | ---------------- | --------------------------------------- | ---------------------------------- |
+| id            |                  | The id for the layer                    |                                    |
+| type          | layers           | the type of resource                    |                                    |
+| links         |                  | links to the resource, and export links | see Links                          |
+| attributes    |                  | Attributes of the layer                 | see separate table for more detail |
+| relationships | layers, added_by | the maps that are in the layer          |                                    |
 
-| Name          |    Value	   | Description                    	| Notes |  
-| ------| -------     |------| -------     |
-| id            |               | The id for the layer             |       |  
-| type          |    layers       | the type of resource            |      |  
-| links         |               | links to the resource, and export links |  see Links  |   
-| attributes    |               | Attributes of the layer | see separate table for more detail   |  
-| relationships | layers, added_by | the maps that are in the layer |  |   
+**_Links_**
 
+| Value | Description                      |
+| ----- | -------------------------------- |
+| self  | the API link to the resourece    |
+| kml   | The export KML url               |
+| tiles | The Tiles template               |
+| wms   | The WMS getCapabilities endpoint |
 
-***Links***
+**_Attributes_**
 
-| Value | Description |
-| ------| -------     |
-| self  | the API link to the resourece |
-| kml | The export KML url |
-| tiles | The Tiles template |
-| wms | The WMS getCapabilities endpoint |  
-
-***Attributes***
-
-| Name               | Type        | Description           	| Notes |  
-| ------| -------     |------| -------     |
-| name               | string      | the title of the layer |  |
-| description        | string      |  description of layer  |  |
-| is_visible          | boolean/string		   | if false, usually indicates a meta-layer or collection of atlases | these meta-layers will not have WMSs   |
-| maps_count        | integer   | how many maps a layer has, as opposed to title pages, plates, and other non-map content	| defines a map using the map_type => is_map variable    |
-| rectified_maps_count    | integer   | how many maps in the layer are warped	|    |
-| rectified_percent  | integer | the percentage of maps that are warped    |  |
-| bbox	              | a comma-separated string of latitude and longitude coordinates   | a rectangle delineating the geographic footprint of the layer 		|     | 
-| source_uri         | string | the URI to the source layer page  | e.g. the Wiki Category that the layer/mosaic represents |
-| created_at		      | date, time, & time zone 	|		when the layer was created in the system		|    |
-| updated_at         | date, time, & time zone  | when the layer was last updated |  |
-
-
+| Name                 | Type                                                           | Description                                                                             | Notes                                                   |
+| -------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| name                 | string                                                         | the title of the layer                                                                  |                                                         |
+| description          | string                                                         | description of layer                                                                    |                                                         |
+| is_visible           | boolean/string                                                 | if false, usually indicates a meta-layer or collection of atlases                       | these meta-layers will not have WMSs                    |
+| maps_count           | integer                                                        | how many maps a layer has, as opposed to title pages, plates, and other non-map content | defines a map using the map_type => is_map variable     |
+| rectified_maps_count | integer                                                        | how many maps in the layer are warped                                                   |                                                         |
+| rectified_percent    | integer                                                        | the percentage of maps that are warped                                                  |                                                         |
+| bbox                 | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic footprint of the layer                           |                                                         |
+| source_uri           | string                                                         | the URI to the source layer page                                                        | e.g. the Wiki Category that the layer/mosaic represents |
+| created_at           | date, time, & time zone                                        | when the layer was created in the system                                                |                                                         |
+| updated_at           | date, time, & time zone                                        | when the layer was last updated                                                         |                                                         |
 
 **Not Found Error**
 
 If the layer is not found, the request will return the following response.
 
-| Status        | Response |
-| ------------- |----------| 
-| 404	(not found)| ```{"errors":[{"title":"Not found","detail":"Couldn't find Layer with 'id'=1234"}]}```    |
-
-
-
+| Status          | Response                                                                           |
+| --------------- | ---------------------------------------------------------------------------------- |
+| 404 (not found) | `{"errors":[{"title":"Not found","detail":"Couldn't find Layer with 'id'=1234"}]}` |
 
 ### GeoJSON format
-[http://mapwarper.net/api/v1/layers/2.geojson](http://mapwarper.net/api/v1/layers/2.geojson) 
+
+[http://mapwarper.net/api/v1/layers/2.geojson](http://mapwarper.net/api/v1/layers/2.geojson)
 
 ```
 {
@@ -1167,41 +1167,41 @@ If the layer is not found, the request will return the following response.
 
 ### Get a Map's Layers
 
-| Method       | Definition | 
-| ------------ | ---------  | 
-| GET          |  /api/v1/maps/{:map_id}/layers or |
-|              |  /api/v1/layers?map_id={:map_id} |
+| Method | Definition                       |
+| ------ | -------------------------------- |
+| GET    | /api/v1/maps/{:map_id}/layers or |
+|        | /api/v1/layers?map_id={:map_id}  |
 
 Queries and returns a list of layers that a given map belongs to.
 
 **Parameters**
 
-| Name       |             | Type    | Description                                                             | Required | Notes                                             |
-|------------|-------------|---------|-------------------------------------------------------------------------|----------|---------------------------------------------------|
-| map_id     |             | integer | the unique identifier for a map                                         | required |                                                   |
-| query      |             | string  | search query                                                            | optional |                                                   |
-| field      |             | string  | specified field to be searched                                          | optional | default is title                                  |
-|            | name        | string  | the title of the layer                                                  | optional | default                                           |
-|            | description | string  | the description of the layer                                            | optional |                                                   |
-| sort_key   |             |         | the field that should be used to sort the results                       | optional | default is updated_at                             |
-|            | name        | string  | the name of the layer                                                   | optional |                                                   |
-|            | updated_at  | string  | when the layer was last updated                                         | optional | default                                           |
-|            | created_at  | string  | when the layer was created                                              | optional |                                                   |
-|            | percent     | string  | the percent of maps which are rectified in the layer                    | optional | ordered by integer (see below)                    |
-| sort_order |             | string  | the order in which the results should appear                            | optional | default is desc                                   |
-|            | asc         |         | ascending order                                                         | optional |                                                   |
-|            | desc        |         | descending order                                                        | optional | default                                           |
-| format     |             | string  | specifies output format                                                 | optional | can also be passed in as extension, eg. maps.json |
-|            | json        | string  | JSON format for layer                                                   | optional | default                                           |
-|            | geojson     | string  | GeoJSON format for layer                                                | optional | simple array, not featurecollection               |
-| page       |             | integer | the page number; use to get the next or previous page of search results | optional |                                                   |
-| per_page   |             | integer | number of results per page                                              | optional | default is 50                                     |
-| bbox	     | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic area to which the search should be limited | optional |
-| operation  |             | string  | specifies how to apply the bounding box  | optional  | default is intersect |
-|            | intersect   | string  |uses the PostGIS ST_Intersects operation to retrieve warped maps whose extents intersect with the bbox parameter  | optional | preferred; orders results by proximity to the bbox extent; default |
-|            | within      | string	 | uses a PostGIS ST_Within operation to retrieve warped maps that fall entirely within the extent of the bbox parameter  | optional      |  |
+| Name       |                                                                | Type                                                                              | Description                                                                                                           | Required | Notes                                                              |
+| ---------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
+| map_id     |                                                                | integer                                                                           | the unique identifier for a map                                                                                       | required |                                                                    |
+| query      |                                                                | string                                                                            | search query                                                                                                          | optional |                                                                    |
+| field      |                                                                | string                                                                            | specified field to be searched                                                                                        | optional | default is title                                                   |
+|            | name                                                           | string                                                                            | the title of the layer                                                                                                | optional | default                                                            |
+|            | description                                                    | string                                                                            | the description of the layer                                                                                          | optional |                                                                    |
+| sort_key   |                                                                |                                                                                   | the field that should be used to sort the results                                                                     | optional | default is updated_at                                              |
+|            | name                                                           | string                                                                            | the name of the layer                                                                                                 | optional |                                                                    |
+|            | updated_at                                                     | string                                                                            | when the layer was last updated                                                                                       | optional | default                                                            |
+|            | created_at                                                     | string                                                                            | when the layer was created                                                                                            | optional |                                                                    |
+|            | percent                                                        | string                                                                            | the percent of maps which are rectified in the layer                                                                  | optional | ordered by integer (see below)                                     |
+| sort_order |                                                                | string                                                                            | the order in which the results should appear                                                                          | optional | default is desc                                                    |
+|            | asc                                                            |                                                                                   | ascending order                                                                                                       | optional |                                                                    |
+|            | desc                                                           |                                                                                   | descending order                                                                                                      | optional | default                                                            |
+| format     |                                                                | string                                                                            | specifies output format                                                                                               | optional | can also be passed in as extension, eg. maps.json                  |
+|            | json                                                           | string                                                                            | JSON format for layer                                                                                                 | optional | default                                                            |
+|            | geojson                                                        | string                                                                            | GeoJSON format for layer                                                                                              | optional | simple array, not featurecollection                                |
+| page       |                                                                | integer                                                                           | the page number; use to get the next or previous page of search results                                               | optional |                                                                    |
+| per_page   |                                                                | integer                                                                           | number of results per page                                                                                            | optional | default is 50                                                      |
+| bbox       | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic area to which the search should be limited | optional                                                                                                              |
+| operation  |                                                                | string                                                                            | specifies how to apply the bounding box                                                                               | optional | default is intersect                                               |
+|            | intersect                                                      | string                                                                            | uses the PostGIS ST_Intersects operation to retrieve warped maps whose extents intersect with the bbox parameter      | optional | preferred; orders results by proximity to the bbox extent; default |
+|            | within                                                         | string                                                                            | uses a PostGIS ST_Within operation to retrieve warped maps that fall entirely within the extent of the bbox parameter | optional |                                                                    |
 
-**Request Example** 
+**Request Example**
 
 [http://mapwarper.net/api/v1/maps/3/layers?query=tartu&sort_key=percent](http://mapwarper.net/api/v1/maps/3/layers?query=tartu&sort_key=percent)
 
@@ -1212,52 +1212,52 @@ Alternatively, the URL can be constructed by passing in the map_id as a paramter
 **Response**
 
 Same response format as for listing and querying layers.
-See [Query or List Layers](#query-or-list-layers) 
+See [Query or List Layers](#query-or-list-layers)
 
 ### Get a Layer's Maps
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          | /api/v1/layers/{:layer_id}/maps  or |
-|              | /api/v1/layers?layer_id={:layer_id} |
+| Method | Definition                          |
+| ------ | ----------------------------------- |
+| GET    | /api/v1/layers/{:layer_id}/maps or  |
+|        | /api/v1/layers?layer_id={:layer_id} |
 
 Returns a paginated list of the maps that comprise a given layer.
 
 **Parameters**
 
-| Name        | values      | Type    | Description                                                             | Required | Notes                                             |
-|-------------|-------------|---------|-------------------------------------------------------------------------|----------|---------------------------------------------------|
-| layer_id    |             | integer | the unique identifier for the layer                                     | required |                                                   |
-| query       |             | string  | search query                                                            | optional |                                                   |
-| field       |             | string  | specified field to be searched                                          | optional | default is title                                  |
-|             | title       | string  | the title of the map                                                    | optional | default                                           |
-|             | description | string  | the description of the map                                              | optional |                                                   |
-|             | publisher   | string  | the publisher                                                           | optional |                                                   |
-|             | author      | string  | the author of the map                                                   | optional |                                                   |
-|             | status      | string  | the status                                                              | optional |                                                   |
-| sort_key    |             |         | the field that should be used to sort the results                       | optional | default is updated_at                             |
-|             | title       | string  | the title of the map                                                    | optional |                                                   |
-|             | updated_at  | string  | when the map was last updated                                           | optional | default                                           |
-|             | created_at  | string  | when the map was created                                                | optional |                                                   |
-|             | status      | string  | the status of the map                                                   | optional | ordered by integer (see below)                    |
-| sort_order  |             | string  | the order in which the results should appear                            | optional | default is desc                                   |
-|             | asc         |         | ascending order                                                         | optional |                                                   |
-|             | desc        |         | descending order                                                        | optional | default                                           |
-| show_warped |             | integer | limits to maps that have already been warped                            | optional |                                                   |
-|             | 1           | integer | limits to maps that have already been warped                            | optional |                                                   |
-|             | 0           | integer | gets all maps, warped and unwarped                                      | optional | default                                           |
-| format      |             | string  | specifies output format                                                 | optional | can also be passed in as extension, eg. maps.json |
-|             | json        | string  | JSON format for maps                                                    | optional | default                                           |
-|             | geojson     | string  | GeoJSON format for maps                                                 | optional | simple array, not featurecollection               |
-| page        |             | integer | the page number; use to get the next or previous page of search results | optional |                                                   |
-| per_page    |             | integer | number of results per page                                              | optional | default is 50                                     |
-| bbox	      | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic area to which the search should be limited | optional |
-| operation   |           | string       | specifies how to apply the bounding box  | optional  | default is intersect |
-|             | intersect | string       |uses the PostGIS ST_Intersects operation to retrieve warped maps whose extents intersect with the bbox parameter  | optional | preferred; orders results by proximity to the bbox extent; default |
-|             | within    | string	      | uses a PostGIS ST_Within operation to retrieve warped maps that fall entirely within the extent of the bbox parameter  | optional      |  |
+| Name        | values                                                         | Type                                                                              | Description                                                                                                           | Required | Notes                                                              |
+| ----------- | -------------------------------------------------------------- | --------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------- | ------------------------------------------------------------------ |
+| layer_id    |                                                                | integer                                                                           | the unique identifier for the layer                                                                                   | required |                                                                    |
+| query       |                                                                | string                                                                            | search query                                                                                                          | optional |                                                                    |
+| field       |                                                                | string                                                                            | specified field to be searched                                                                                        | optional | default is title                                                   |
+|             | title                                                          | string                                                                            | the title of the map                                                                                                  | optional | default                                                            |
+|             | description                                                    | string                                                                            | the description of the map                                                                                            | optional |                                                                    |
+|             | publisher                                                      | string                                                                            | the publisher                                                                                                         | optional |                                                                    |
+|             | author                                                         | string                                                                            | the author of the map                                                                                                 | optional |                                                                    |
+|             | status                                                         | string                                                                            | the status                                                                                                            | optional |                                                                    |
+| sort_key    |                                                                |                                                                                   | the field that should be used to sort the results                                                                     | optional | default is updated_at                                              |
+|             | title                                                          | string                                                                            | the title of the map                                                                                                  | optional |                                                                    |
+|             | updated_at                                                     | string                                                                            | when the map was last updated                                                                                         | optional | default                                                            |
+|             | created_at                                                     | string                                                                            | when the map was created                                                                                              | optional |                                                                    |
+|             | status                                                         | string                                                                            | the status of the map                                                                                                 | optional | ordered by integer (see below)                                     |
+| sort_order  |                                                                | string                                                                            | the order in which the results should appear                                                                          | optional | default is desc                                                    |
+|             | asc                                                            |                                                                                   | ascending order                                                                                                       | optional |                                                                    |
+|             | desc                                                           |                                                                                   | descending order                                                                                                      | optional | default                                                            |
+| show_warped |                                                                | integer                                                                           | limits to maps that have already been warped                                                                          | optional |                                                                    |
+|             | 1                                                              | integer                                                                           | limits to maps that have already been warped                                                                          | optional |                                                                    |
+|             | 0                                                              | integer                                                                           | gets all maps, warped and unwarped                                                                                    | optional | default                                                            |
+| format      |                                                                | string                                                                            | specifies output format                                                                                               | optional | can also be passed in as extension, eg. maps.json                  |
+|             | json                                                           | string                                                                            | JSON format for maps                                                                                                  | optional | default                                                            |
+|             | geojson                                                        | string                                                                            | GeoJSON format for maps                                                                                               | optional | simple array, not featurecollection                                |
+| page        |                                                                | integer                                                                           | the page number; use to get the next or previous page of search results                                               | optional |                                                                    |
+| per_page    |                                                                | integer                                                                           | number of results per page                                                                                            | optional | default is 50                                                      |
+| bbox        | a comma-separated string of latitude and longitude coordinates | a rectangle delineating the geographic area to which the search should be limited | optional                                                                                                              |
+| operation   |                                                                | string                                                                            | specifies how to apply the bounding box                                                                               | optional | default is intersect                                               |
+|             | intersect                                                      | string                                                                            | uses the PostGIS ST_Intersects operation to retrieve warped maps whose extents intersect with the bbox parameter      | optional | preferred; orders results by proximity to the bbox extent; default |
+|             | within                                                         | string                                                                            | uses a PostGIS ST_Within operation to retrieve warped maps that fall entirely within the extent of the bbox parameter | optional |                                                                    |
 
 **Request Examples**
- 
+
 [http://mapwarper.net/api/v1/layers/3/maps](http://mapwarper.net/api/v1/layers/3/maps) or
 
 [http://mapwarper.net/api/v1/layers?layer_id=3](http://mapwarper.net/api/v1/layers?layer_id=3)
@@ -1266,8 +1266,7 @@ Returns a paginated list of the maps that comprise a given layer.
 
 Same response as for listing and querying layers.
 
-See [Search for Maps](#search-for-maps) 
-
+See [Search for Maps](#search-for-maps)
 
 ### Map and Layer Web Map Services
 
@@ -1278,25 +1277,22 @@ The WMS and Tile services are available and are now shown in the standard JSON r
 Creates a new layer and adding several existing maps to it at the same time.
 Authentication required.
 
-
-| Method       | Definition | 
-| ------------ | -------    | 
-| POST         |  /api/v1/layers |
- 
+| Method | Definition     |
+| ------ | -------------- |
+| POST   | /api/v1/layers |
 
 **Parameters**
 
-The body of the request should be in JSON-API format. ```data``` may also have ```map_ids``  - an array of existing map ids to add to the layer.
+The body of the request should be in JSON-API format. `data` may also have ``map_ids` - an array of existing map ids to add to the layer.
 
 | Name       |             | Type   | Description                          | Notes    |
-|------------|-------------|--------|--------------------------------------|----------|
+| ---------- | ----------- | ------ | ------------------------------------ | -------- |
 | data       |             |        |                                      |          |
 |            | type        | string | "layers"                             | required |
 |            | map_ids     | array  | array of integers of the maps to add | optional |
 | attributes |             |        |                                      |          |
 |            | name        | string | the name of the layer                | required |
 |            | description | string | the description of the layer         | optional |
-
 
 Example:
 
@@ -1323,36 +1319,32 @@ curl -H "Content-Type: application/json" -H 'Accept: application/json' -X POST -
 
 If successful, the response should return the new layer in json api format
 
-
 ### Update Layer
 
 Updates a new layer and adding several existing maps to it at the same time. This could be used to add many maps at the same time to a layer.
 Authentication required.
-Only the owner of the layer or an editor is authorized. 
+Only the owner of the layer or an editor is authorized.
 
-
-| Method       | Definition | 
-| ------------ | -------    | 
-| PATCH         |  /api/v1/layers/{:id} |
- 
+| Method | Definition           |
+| ------ | -------------------- |
+| PATCH  | /api/v1/layers/{:id} |
 
 **Parameters**
 
-| Name |   | Type    | Description                         | Required | Notes |   |
-|------|---|---------|-------------------------------------|----------|-------|---|
-| id   |   | integer | the unique identifier for the layer | required |       |   |
+| Name |     | Type    | Description                         | Required | Notes |     |
+| ---- | --- | ------- | ----------------------------------- | -------- | ----- | --- |
+| id   |     | integer | the unique identifier for the layer | required |       |     |
 
-The body of the request should be in JSON-API format. ```data``` may also have ```map_ids``  - an array of existing map ids to add to the layer.
+The body of the request should be in JSON-API format. `data` may also have ``map_ids` - an array of existing map ids to add to the layer.
 
 | Name       |             | Type   | Description                          | Notes    |
-|------------|-------------|--------|--------------------------------------|----------|
+| ---------- | ----------- | ------ | ------------------------------------ | -------- |
 | data       |             |        |                                      |          |
 |            | type        | string | "layers"                             | required |
 |            | map_ids     | array  | array of integers of the maps to add | optional |
 | attributes |             |        |                                      |          |
 |            | name        | string | the name of the layer                | optional |
 |            | description | string | the description of the layer         | optional |
-
 
 Example:
 
@@ -1384,16 +1376,15 @@ Destroys a layer.
 Authentication required.
 Only the owner of the layer or an editor is authorized.
 
-| Method       | Definition          | 
-|--------------|---------------------|
-| DELETE       | /api/v1/layers{:id} |
+| Method | Definition          |
+| ------ | ------------------- |
+| DELETE | /api/v1/layers{:id} |
 
 **Parameters**
 
-| Name |   | Type    | Description                         | Required | Notes |   |
-|------|---|---------|-------------------------------------|----------|-------|---|
-| id   |   | integer | the unique identifier for the layer | required |       |   |
-
+| Name |     | Type    | Description                         | Required | Notes |     |
+| ---- | --- | ------- | ----------------------------------- | -------- | ----- | --- |
+| id   |     | integer | the unique identifier for the layer | required |       |     |
 
 **cURL Example**
 
@@ -1409,15 +1400,15 @@ If successful, the response should return the deleted layer in json api format
 ### Toggle Layer Visibility
 
 Toggles the visibility of a layer. This turns off the layer from being mosaiced together, and having WMS and Tile export options.
-It is useful for layers which represent meta groups of maps, or layers of layers. 
+It is useful for layers which represent meta groups of maps, or layers of layers.
 Authentication required.
 Administrator authorized only.
 
 
-| Method       | Definition | 
-| ------------ | -------    | 
+| Method       | Definition |
+| ------------ | -------    |
 | PATCH         |  /api/v1/layers/{:id}/toggle_visibility |
- 
+
 
 **Parameters**
 
@@ -1445,22 +1436,18 @@ Removes a single map from a layer.
 Authentication required.
 Only the owner of the layer or an editor is authorized.
 
-
-| Method       | Definition | 
-| ------------ | -------    | 
-| PATCH         |  /api/v1/layers/{:id}/remove_map |
- 
+| Method | Definition                      |
+| ------ | ------------------------------- |
+| PATCH  | /api/v1/layers/{:id}/remove_map |
 
 **Parameters**
 
 It takes a single parameter, map_id containing the id of the map to be removed.
 
-| Name |   | Type    | Description                         | Required | Notes |   |
-|------|---|---------|-------------------------------------|----------|-------|---|
-| id   |   | integer | the unique identifier for the layer | required |       |   |
-| map_id     |             |  integer |   unique id of the map to be removed        |     required     |
-
-
+| Name   |     | Type    | Description                         | Required | Notes |     |
+| ------ | --- | ------- | ----------------------------------- | -------- | ----- | --- |
+| id     |     | integer | the unique identifier for the layer | required |       |     |
+| map_id |     | integer | unique id of the map to be removed  | required |
 
 **cURL Example**
 
@@ -1491,17 +1478,17 @@ Authentication required.
 Administrator authorized only.
 
 
-| Method       | Definition | 
-| ------------ | -------    | 
+| Method       | Definition |
+| ------------ | -------    |
 | PATCH         |  /api/v1/layers/{:id}/remove_map |
- 
+
 
 **Parameters**
 
-| Name    |   | Type    | Description                         | Required | Notes | 
+| Name    |   | Type    | Description                         | Required | Notes |
 |---------|---|---------|-------------------------------------|----------|-------|
-| id      |   | integer | the unique identifier for the layer to be merged | required |       |  
-| dest_id |   | integer | the unique identifier for the destination layer | required |       | 
+| id      |   | integer | the unique identifier for the layer to be merged | required |       |
+| dest_id |   | integer | the unique identifier for the destination layer | required |       |
 
 
 **cURL Example**
@@ -1527,8 +1514,7 @@ If error, the following will be returned (with 422 status)
 
 --->
 
-------------------------------
-
+---
 
 ## Ground Control Points
 
@@ -1536,9 +1522,9 @@ Ground control points are the user-selected locations used to warp an image.
 
 ### List and Sort Control Points
 
-| Method        | Definition    |
-| ------------- | ------------- |
-| GET           |  /api/v1/gcps  |
+| Method | Definition   |
+| ------ | ------------ |
+| GET    | /api/v1/gcps |
 
 Gets and sorts all control points.
 No authentication required.
@@ -1546,7 +1532,7 @@ No authentication required.
 **Parameters**
 
 | Name       | values     | Type    | Description                                                             | Required | Notes                 |
-|------------|------------|---------|-------------------------------------------------------------------------|----------|-----------------------|
+| ---------- | ---------- | ------- | ----------------------------------------------------------------------- | -------- | --------------------- |
 | sort_key   |            |         | the field that should be used to sort the results                       | optional | default is updated_at |
 |            | map_id     | string  | the id of the map the GCP belongs to                                    | optional |                       |
 |            | lat        | string  | the latitude of the ground control point                                | optional |                       |
@@ -1563,9 +1549,8 @@ No authentication required.
 | map_id     |            | integer | restricts results to the map given                                      | optional |                       |
 
 **Request Examples**
- 
-[http://mapwarper.net/api/v1/gcps?per_page=2&sort_key=updated_at](http://mapwarper.net/api/v1/gcps?per_page=2&sort_key=updated_at) 
 
+[http://mapwarper.net/api/v1/gcps?per_page=2&sort_key=updated_at](http://mapwarper.net/api/v1/gcps?per_page=2&sort_key=updated_at)
 
 **Response**
 
@@ -1612,22 +1597,21 @@ No authentication required.
 	}
 }
 ```
+
 **Response Elements**
 
-
-***Data***
+**_Data_**
 
 An array of control points, each having an attributes object and, id and type and links
 
-| Name          |    Value	   | Description                    	| Notes |  
-| ------| -------     |------| -------     |
-| id            |               | The id for the gcp             |       |  
-| type          |    gcps       | the type of resource            |      |  
-| links         |               | links to the resource, and export links |   |   
-| attributes    |               | Attributes of the gcps | see separate table for more detail   |  
+| Name       | Value | Description                             | Notes                              |
+| ---------- | ----- | --------------------------------------- | ---------------------------------- |
+| id         |       | The id for the gcp                      |                                    |
+| type       | gcps  | the type of resource                    |                                    |
+| links      |       | links to the resource, and export links |                                    |
+| attributes |       | Attributes of the gcps                  | see separate table for more detail |
 
-
-***Links***
+**_Links_**
 
 The top level links holds pagination links. Shown if there are more results than are contained in the response.
 
@@ -1639,13 +1623,13 @@ The top level links holds pagination links. Shown if there are more results than
 },
 ```
 
-| Value | Description |
-| ------| -------     |
-| self | the link to the current page |
-| next |  the next page in the sequence |
-| last |  the last page in the sequence of pages |
+| Value | Description                            |
+| ----- | -------------------------------------- |
+| self  | the link to the current page           |
+| next  | the next page in the sequence          |
+| last  | the last page in the sequence of pages |
 
-***Meta***
+**_Meta_**
 
 Useful in pagination. Will show the total number of results, for example if the request is limited to returning 25 maps, Shown if there are more results than are contained in the response.
 
@@ -1655,52 +1639,50 @@ Useful in pagination. Will show the total number of results, for example if the 
   "total_pages": 2
 }
 ```
+
 indicates that 50 results have been found over 2 pages.
 
-| Value | Description |
-| ------| -------     |
+| Value         | Description                                       |
+| ------------- | ------------------------------------------------- |
 | total_entries | the total number of layers found for this request |
-| total_pages |  the total number of pages found |
+| total_pages   | the total number of pages found                   |
 
+**_Attributes_**
 
-***Attributes***
-
-| Name               | Type        | Description           	| Notes |  
-| ------| -------     |------| -------     |
-| map_id         | id      | the unique identifier for the map the point belongs to   |  see below for other way to get gcps for a map |
-| lat           | big decimal | the latitude of the ground control point   | |
-| lon           | big decimal | the longitude of the ground control point           | |
-| x             | float       | the x coordinate on the image that corresponds to "lon"   | |
-| y             | float       | the y coordinate on the image that corresponds to "lat"   | |
-| error         | float       | the calculated root mean square error, or distortion, for the ground control point   | null unless called via `/api/v1/maps/{:map_id}/gcps` see below |
-| created_at    | date, time, & time zone | the date and time when the ground control point was created   | |
-| updated_at    | date, time, & time zone | the date and time when the ground control point was last updated   | |
-
+| Name       | Type                    | Description                                                                        | Notes                                                          |
+| ---------- | ----------------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| map_id     | id                      | the unique identifier for the map the point belongs to                             | see below for other way to get gcps for a map                  |
+| lat        | big decimal             | the latitude of the ground control point                                           |                                                                |
+| lon        | big decimal             | the longitude of the ground control point                                          |                                                                |
+| x          | float                   | the x coordinate on the image that corresponds to "lon"                            |                                                                |
+| y          | float                   | the y coordinate on the image that corresponds to "lat"                            |                                                                |
+| error      | float                   | the calculated root mean square error, or distortion, for the ground control point | null unless called via `/api/v1/maps/{:map_id}/gcps` see below |
+| created_at | date, time, & time zone | the date and time when the ground control point was created                        |                                                                |
+| updated_at | date, time, & time zone | the date and time when the ground control point was last updated                   |                                                                |
 
 ### Get a Map's Ground Control Points
 
 There are two different ways to get the control points of a map:
 
-| Method        | Definition    |
-| ------------- | ------------- |
-| GET           |  /api/v1/maps/{:map_id}/gcps    or  | 
-|               |  /api/v1/gcps?map_id={:map_id}  (see above) |
+| Method | Definition                                |
+| ------ | ----------------------------------------- |
+| GET    | /api/v1/maps/{:map_id}/gcps or            |
+|        | /api/v1/gcps?map_id={:map_id} (see above) |
 
 Returns a list of the ground control points used to warp a map, as well as their calculated errors.
-No authentication required. 
+No authentication required.
 
-> ** Note: api/v1/maps/:id/gcps includes the calculated error but with no sorting or pagination, whereas api/v1/gcps?map_id={:map_id} whilst has sorting and pagination but with no calculated error.
+> \*\* Note: api/v1/maps/:id/gcps includes the calculated error but with no sorting or pagination, whereas api/v1/gcps?map_id={:map_id} whilst has sorting and pagination but with no calculated error.
 
 **Parameters**
 
-| Name          |             | Type        | Description | Required  | Notes     |
-| ------------- | ----------  | ----------  | ----------  | --------  | --------- |
-| map_id        |             | integer     | the unique identifier for the map   |  required         |       |
-
+| Name   |     | Type    | Description                       | Required | Notes |
+| ------ | --- | ------- | --------------------------------- | -------- | ----- |
+| map_id |     | integer | the unique identifier for the map | required |       |
 
 **Request Examples**
 
-[http://mapwarper.net/api/v1/maps/2/gcps](http://mapwarper.net/api/v1/maps/2/gcps) 
+[http://mapwarper.net/api/v1/maps/2/gcps](http://mapwarper.net/api/v1/maps/2/gcps)
 
 **Response**
 
@@ -1744,20 +1726,20 @@ The response will be a list of ground control points in the following format.
 	}
 }
 ```
+
 **Response Elements**
 
-
-***Data***
+**_Data_**
 
 An array of control points, each having an attributes object and, id and type and links
 
-| Name          |    Value	   | Description                    	| Notes |  
-| ------| -------     |------| -------     |
-| id            |               | The id for the gcp             |       |  
-| type          |    gcps       | the type of resource            |      |   
-| attributes    |               | Attributes of the gcps | see separate table for more detail   |  
+| Name       | Value | Description            | Notes                              |
+| ---------- | ----- | ---------------------- | ---------------------------------- |
+| id         |       | The id for the gcp     |                                    |
+| type       | gcps  | the type of resource   |                                    |
+| attributes |       | Attributes of the gcps | see separate table for more detail |
 
-***Meta***
+**_Meta_**
 
 Contains details about the combined error for the control points for the entire map
 
@@ -1767,37 +1749,33 @@ Contains details about the combined error for the control points for the entire 
 	}
 ```
 
-***Attributes***
+**_Attributes_**
 
-
-| Name               | Type        | Description           	| Notes |  
-| ------| -------     |------| -------     |
-| map_id         | id      | the unique identifier for the map the point belongs to   |   |
-| lat           | big decimal | the latitude of the ground control point   | |
-| lon           | big decimal | the longitude of the ground control point           | |
-| x             | float       | the x coordinate on the image that corresponds to "lon"   | |
-| y             | float       | the y coordinate on the image that corresponds to "lat"   | |
-| error         | float       | the calculated root mean square error, or distortion, for the ground control point   |  |
-| created_at    | date, time, & time zone | the date and time when the ground control point was created   | |
-| updated_at    | date, time, & time zone | the date and time when the ground control point was last updated   | |
-
-
+| Name       | Type                    | Description                                                                        | Notes |
+| ---------- | ----------------------- | ---------------------------------------------------------------------------------- | ----- |
+| map_id     | id                      | the unique identifier for the map the point belongs to                             |       |
+| lat        | big decimal             | the latitude of the ground control point                                           |       |
+| lon        | big decimal             | the longitude of the ground control point                                          |       |
+| x          | float                   | the x coordinate on the image that corresponds to "lon"                            |       |
+| y          | float                   | the y coordinate on the image that corresponds to "lat"                            |       |
+| error      | float                   | the calculated root mean square error, or distortion, for the ground control point |       |
+| created_at | date, time, & time zone | the date and time when the ground control point was created                        |       |
+| updated_at | date, time, & time zone | the date and time when the ground control point was last updated                   |       |
 
 ### Get a Single Ground Control Point
 
-| Method       | Definition | 
-| ------------ | ---------- | 
-| GET          |  /api/v1/gcps/{:gcp_id} |
+| Method | Definition             |
+| ------ | ---------------------- |
+| GET    | /api/v1/gcps/{:gcp_id} |
 
 Returns a specified ground control point by ID.
 No authentication required.
 
 **Parameters**
 
-| Name          |             | Type        | Description | Required  | Notes     |
-| ------------- | ----------  | ----------  | ----------  | --------  | --------- |
-| gcp_id        |             | integer     | the unique identifier for the ground control point   |  required  |       |
-
+| Name   |     | Type    | Description                                        | Required | Notes |
+| ------ | --- | ------- | -------------------------------------------------- | -------- | ----- |
+| gcp_id |     | integer | the unique identifier for the ground control point | required |       |
 
 **Example**
 
@@ -1826,41 +1804,38 @@ No authentication required.
 
 **Response Elements**
 
-***Data***
+**_Data_**
 
-| Name          |    Value	   | Description                    	| Notes |  
-| ------| -------     |------| -------     |
-| id            |               | The id for the gcp             |       |  
-| type          |    gcps       | the type of resource            |      |   
-| attributes    |               | Attributes of the gcps | see separate table for more detail   |  
+| Name       | Value | Description            | Notes                              |
+| ---------- | ----- | ---------------------- | ---------------------------------- |
+| id         |       | The id for the gcp     |                                    |
+| type       | gcps  | the type of resource   |                                    |
+| attributes |       | Attributes of the gcps | see separate table for more detail |
 
-***Attributes***
+**_Attributes_**
 
-
-| Name               | Type        | Description           	| Notes |  
-| ------| -------     |------| -------     |
-| map_id         | id      | the unique identifier for the map the point belongs to   |   |
-| lat           | big decimal | the latitude of the ground control point   | |
-| lon           | big decimal | the longitude of the ground control point           | |
-| x             | float       | the x coordinate on the image that corresponds to "lon"   | |
-| y             | float       | the y coordinate on the image that corresponds to "lat"   | |
-| error         | float       | the calculated root mean square error, or distortion, for the ground control point   |  |
-| created_at    | date, time, & time zone | the date and time when the ground control point was created   | |
-| updated_at    | date, time, & time zone | the date and time when the ground control point was last updated   | |
-
-
+| Name       | Type                    | Description                                                                        | Notes |
+| ---------- | ----------------------- | ---------------------------------------------------------------------------------- | ----- |
+| map_id     | id                      | the unique identifier for the map the point belongs to                             |       |
+| lat        | big decimal             | the latitude of the ground control point                                           |       |
+| lon        | big decimal             | the longitude of the ground control point                                          |       |
+| x          | float                   | the x coordinate on the image that corresponds to "lon"                            |       |
+| y          | float                   | the y coordinate on the image that corresponds to "lat"                            |       |
+| error      | float                   | the calculated root mean square error, or distortion, for the ground control point |       |
+| created_at | date, time, & time zone | the date and time when the ground control point was created                        |       |
+| updated_at | date, time, & time zone | the date and time when the ground control point was last updated                   |       |
 
 If the GCP is not found, the request will return the following response:
 
-| Status        | Response |
-| ------------- | -------- | 
-| 404	(not found) | ```{"errors":[{"title":"Not found","detail":"Couldn't find Gcp with 'id'=2222"}]}```    |
+| Status          | Response                                                                         |
+| --------------- | -------------------------------------------------------------------------------- |
+| 404 (not found) | `{"errors":[{"title":"Not found","detail":"Couldn't find Gcp with 'id'=2222"}]}` |
 
 ### Add Ground Control Point
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| POST         |  /api/v1/gcps |
+| Method | Definition   |
+| ------ | ------------ |
+| POST   | /api/v1/gcps |
 
 Adds the ground control points on which a warp will be based, passing in JSON-API for the GCP.
 Requires authentication.
@@ -1869,13 +1844,12 @@ Requires authentication.
 
 The body of the request should be in JSON-API format with the following attributes:
 
-| Name               | Type        | Description           	| Notes |  
-| ------| -------     |------| -------     |
-| lat           | big decimal | the latitude of the ground control point   |required |
-| lon           | big decimal | the longitude of the ground control point           | required|
-| x             | float       | the x coordinate on the image that corresponds to "lon"   | required|
-| y             | float       | the y coordinate on the image that corresponds to "lat"   | required|
-
+| Name | Type        | Description                                             | Notes    |
+| ---- | ----------- | ------------------------------------------------------- | -------- |
+| lat  | big decimal | the latitude of the ground control point                | required |
+| lon  | big decimal | the longitude of the ground control point               | required |
+| x    | float       | the x coordinate on the image that corresponds to "lon" | required |
+| y    | float       | the y coordinate on the image that corresponds to "lat" | required |
 
 Example:
 
@@ -1943,23 +1917,22 @@ An error will return something similar to the following message.
 
 ### Update a GCP
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| PATCH          |  /api/v1/gcps/{:gcp_id} |
+| Method | Definition             |
+| ------ | ---------------------- |
+| PATCH  | /api/v1/gcps/{:gcp_id} |
 
 Updates a given GCP.
 Requires authentication.
 
 **Attributes**
 
-| Name          |             | Type        | Description | Required  | Notes |
-| ------------- | ----------  | ----------  | ----------- | --------- | ----- |
-| map_id        |             | integer     | the unique identifier of the map the point belongs to | optional |   |
-| lat           |             | big decimal | the latitude of the ground control point to warp to    | optional  |  |
-| lon           |             | big decimal | the longitude of the ground control point to warp to   | optional  |  |
-| x             |             | float       | the x coordinate on the unwarped image that corresponds to "lon"    | optional | |
-| y             |             | float       | the y coordinate on the unwarped image that corresponds to "lat"    | optional |  | 
-
+| Name   |     | Type        | Description                                                      | Required | Notes |
+| ------ | --- | ----------- | ---------------------------------------------------------------- | -------- | ----- |
+| map_id |     | integer     | the unique identifier of the map the point belongs to            | optional |       |
+| lat    |     | big decimal | the latitude of the ground control point to warp to              | optional |       |
+| lon    |     | big decimal | the longitude of the ground control point to warp to             | optional |       |
+| x      |     | float       | the x coordinate on the unwarped image that corresponds to "lon" | optional |       |
+| y      |     | float       | the y coordinate on the unwarped image that corresponds to "lat" | optional |       |
 
 **Example using cURL and cookie authentication**
 
@@ -1996,20 +1969,20 @@ Example:
 
 ### Delete a GCP
 
-| Method        | Definition | 
-| ------------- | ---------  | 
-| DELETE        |  /api/v1/gcp/{:gcp_id} |
+| Method | Definition            |
+| ------ | --------------------- |
+| DELETE | /api/v1/gcp/{:gcp_id} |
 
-Deletes a ground control point. 
+Deletes a ground control point.
 Requires authentication.
 
 **Parameters**
 
-| Name        | Type        | Description | Required  | 
-| ----------- | ---------   | ---------   | --------- |
-| gcp_id      |  integer    | the unique identifier for the ground control point  |  required |
+| Name   | Type    | Description                                        | Required |
+| ------ | ------- | -------------------------------------------------- | -------- |
+| gcp_id | integer | the unique identifier for the ground control point | required |
 
-Example: 
+Example:
 
 **curl example**
 
@@ -2023,11 +1996,9 @@ If deleted, it will return with the deleted point.
 
 If the GCP is not found, the request will return the following response:
 
-| Status        | Response |
-| ------------- | -------- | 
-| 404	(not found) | ```{"errors":[{"title":"Not found","detail":"Couldn't find Gcp with 'id'=2222"}]}```    |
-
-
+| Status          | Response                                                                         |
+| --------------- | -------------------------------------------------------------------------------- |
+| 404 (not found) | `{"errors":[{"title":"Not found","detail":"Couldn't find Gcp with 'id'=2222"}]}` |
 
 ### Add Many GCPs
 
@@ -2035,21 +2006,18 @@ Adds many Ground Control Point at once to one or more maps
 Authentication required.
 Editor role authorized only.
 
-
-| Method       | Definition | 
-| ------------ | -------    | 
-| POST         |  /api/v1/gcps/add_many  |
- 
+| Method | Definition            |
+| ------ | --------------------- |
+| POST   | /api/v1/gcps/add_many |
 
 **Parameters**
 
+| Name | Type  | Description                | Required |
+| ---- | ----- | -------------------------- | -------- |
+| gcps | array | an array of control points | required |
 
-| Name      	    |  Type      | Description  |  Required | 
-| -------------   | ---------- | ------------ |  -------- | 
-|   gcps     		  | array      | an array of control points   | required |
-
-Each gcp should have a ```mapid```  attribute to be able to add the control point to the correct map.
-Points cannot be added twice. 
+Each gcp should have a `mapid` attribute to be able to add the control point to the correct map.
+Points cannot be added twice.
 
 ```
 {
@@ -2114,7 +2082,7 @@ If successful, the response should return the newly added gcps
 }
 ```
 
-***Errors***
+**_Errors_**
 
 If a map cannot be found
 
@@ -2122,22 +2090,20 @@ If a map cannot be found
 {"errors":[{"title":"Not found","detail":"Couldn't find Map with 'id'=123"}]}
 ```
 
-
-
 ## Masking
 
-Uses GML to mask a portion of the map. This essentially crops the map. Masking is used to delete the borders around the map images to make a seamless layer of contiguous maps. 
+Uses GML to mask a portion of the map. This essentially crops the map. Masking is used to delete the borders around the map images to make a seamless layer of contiguous maps.
 
 ### Get Mask
 
-| Method        | Definition | 
-| ------------- | ---------  | 
-| GET           |  http://mapwarper.net/mapimages/{:map_id}.gml.ol |
+| Method | Definition                                      |
+| ------ | ----------------------------------------------- |
+| GET    | http://mapwarper.net/mapimages/{:map_id}.gml.ol |
 
 Gets a GML string containing coordinates for the polygon(s) to mask over.
-No authentication required. 
+No authentication required.
 
-> ** Note: The correct way to find the path to the mask is to get the Map object and look in it's links
+> \*\* Note: The correct way to find the path to the mask is to get the Map object and look in it's links
 
 ```
 "mask": "http://mapwarper.net/mapimages/260.gml.ol",
@@ -2145,7 +2111,7 @@ No authentication required.
 
 **Examples**
 
-http://mapwarper.net/shared/masks/7449.gml.ol 
+http://mapwarper.net/shared/masks/7449.gml.ol
 
 **Response Example**
 
@@ -2157,19 +2123,19 @@ http://mapwarper.net/shared/masks/7449.gml.ol
 
 ### Save Mask
 
-| Method        | Definition | 
-| ------------- | -------    | 
-| POST          | /api/v1/maps/:id/mask  |
+| Method | Definition            |
+| ------ | --------------------- |
+| POST   | /api/v1/maps/:id/mask |
 
 Saves a mask. Returns map json.
 Requires authentication.
 
 **Parameters**
 
-| Name          |              | Type        | Description  | Required  | Notes |
-| ------------- | ---------    | ----------  | ---------    | --------  | ----- |
-| map_id        |              |  integer    | the unique indentifer for the map | required  | |
-| output        |              |  gml        | the GML      | required  |        |
+| Name   |     | Type    | Description                       | Required | Notes |
+| ------ | --- | ------- | --------------------------------- | -------- | ----- |
+| map_id |     | integer | the unique indentifer for the map | required |       |
+| output |     | gml     | the GML                           | required |       |
 
 **cURL Example**
 
@@ -2183,35 +2149,30 @@ curl -X POST -d "format=json" -d 'output=<wfs:FeatureCollection xmlns:wfs="http:
 
 A successful call will return the applicable map in json-api format.
 
-
-
-
 ### Delete Mask
 
-| Method        | Definition | 
-| ------------- | -------    | 
-| DELETE        |  /api/v1/maps/{:map_id}/mask |
+| Method | Definition                  |
+| ------ | --------------------------- |
+| DELETE | /api/v1/maps/{:map_id}/mask |
 
 Deletes a mask.
 Requires authentication.
 
-**Parameters** 
+**Parameters**
 
-| Name          |             | Type        | Description | Required  | 
-| ------------- | ---------   | ---------   | ----------- | --------  |
-| map_id        |             | integer     | the unique identifier for the map   |  required  |
-
+| Name   |     | Type    | Description                       | Required |
+| ------ | --- | ------- | --------------------------------- | -------- |
+| map_id |     | integer | the unique identifier for the map | required |
 
 **Response**
 
 If sucessfully deleted the response will be the affected map in json api format
 
-
 ###Crop / Mask Map
 
-| Method        | Definition | 
-| ------------- | -------    | 
-| PATCH          |  /api/v1/maps/{:map_id}/crop |
+| Method | Definition                  |
+| ------ | --------------------------- |
+| PATCH  | /api/v1/maps/{:map_id}/crop |
 
 Applies the clipping mask to a map, but does not warp it. A clipping mask should be saved before calling this. Requires authentication.
 
@@ -2238,23 +2199,21 @@ If there is no mask saved, the following error will be returned (Error Status 42
 }
 ```
 
-
 ### Save, Mask, and Warp Map
 
-| Method       | Definition | 
-| ------------ | --------   | 
-| PATCH         |  /api/v1/maps/:map_id/mask_crop_rectify |
+| Method | Definition                             |
+| ------ | -------------------------------------- |
+| PATCH  | /api/v1/maps/:map_id/mask_crop_rectify |
 
-Rolls the calls into one. Saves the mask, applies the mask to the map, and warps the map using the mask. 
+Rolls the calls into one. Saves the mask, applies the mask to the map, and warps the map using the mask.
 Requires authentication.
 
 **Parameters**
 
-| Name        | Type        | Description | Required  |
-| ----------- | ----------- | ----------  | --------- |
-| map_id      | integer     | the unique identifier for the map | required |
-| output        |              |  gml        | the GML      | required  |        |
-
+| Name   | Type    | Description                       | Required |
+| ------ | ------- | --------------------------------- | -------- | -------- | --- |
+| map_id | integer | the unique identifier for the map | required |
+| output |         | gml                               | the GML  | required |     |
 
 **Example**
 
@@ -2268,15 +2227,15 @@ curl -X POST -d "format=json" -d 'output=<wfs:FeatureCollection xmlns:wfs="http:
 
 As rectify call.
 
---------
+---
 
 ## Warping
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| PATCH         |  /api/v1/maps/{:map_id}/rectify |
+| Method | Definition                     |
+| ------ | ------------------------------ |
+| PATCH  | /api/v1/maps/{:map_id}/rectify |
 
-Warps or rectifies a map according to its saved GCPs and the parameters passed in. 
+Warps or rectifies a map according to its saved GCPs and the parameters passed in.
 Requires authentication.
 
 **Curl Example**
@@ -2288,7 +2247,7 @@ curl -X PATCH -d "use_mask=false&format=json" -u email@example.com:password  htt
 **Parameters**
 
 | Name     |      | Type    | Description                                             | Required | Notes            |
-|----------|------|---------|---------------------------------------------------------|----------|------------------|
+| -------- | ---- | ------- | ------------------------------------------------------- | -------- | ---------------- |
 | map_id   |      | integer | the unique identifier for the map                       | required |                  |
 | use_mask |      | boolean | applies any saved mask to the map                       | optional | default is false |
 | format   |      | string  | specifies output format                                 | optional | default is HTML  |
@@ -2299,7 +2258,7 @@ curl -X PATCH -d "use_mask=false&format=json" -u email@example.com:password  htt
 The following options specify the algorithm or method that should be used to warp a map.
 
 | Name              |             | Type   | Description            | Required | Notes                                 |
-|-------------------|-------------|--------|------------------------|----------|---------------------------------------|
+| ----------------- | ----------- | ------ | ---------------------- | -------- | ------------------------------------- |
 | resample_options  |             | string |                        | optional |                                       |
 |                   | near        |        | nearest neighbor       | optional | fastest processing; default           |
 |                   | bilinear    |        | bilinear interpolation | optional |                                       |
@@ -2323,6 +2282,7 @@ If there is an error, a 422 status code is sent along with json
 Two common error messages are:
 
 Not enough Ground Control Points
+
 ```
 {
 	"errors": [{
@@ -2333,6 +2293,7 @@ Not enough Ground Control Points
 ```
 
 Map currently being rectified
+
 ```
 {
 	"errors": [{
@@ -2342,32 +2303,33 @@ Map currently being rectified
 }
 ```
 
---------
+---
+
 ## Maps
 
 ### Create Map
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| POST         |  /api/v1/maps |
+| Method | Definition   |
+| ------ | ------------ |
+| POST   | /api/v1/maps |
 
 Creates a new map.
 Requires authentication.
 
 **Parameters**
 
-The body of the request should be in JSON-API format with the following attribute. 
+The body of the request should be in JSON-API format with the following attribute.
 
-|        Name         |       Type        |                  Description                   |                         Notes                          |                    |
+| Name                | Type              | Description                                    | Notes                                                  |                    |
 | ------------------- | ----------------- | ---------------------------------------------- | ------------------------------------------------------ | ------------------ |
 | title               | string            | the title of the map                           | required                                               |                    |
 | description         | string            | the title of the map                           |                                                        |                    |
 | source_uri          | string            | the URI to the source map page                 | e.g. the wiki page                                     |                    |
 | unique_id           | string            | the image filename taken from the source image |                                                        |                    |
 | date_depicted       | integer or string | Date the map is depicted                       | numeric, max 4 characters long. Used in search by date |                    |
-| map_type            | string            | string                                         | one of  "is_map", "index", "not_map"                   | defaults to is_map |
+| map_type            | string            | string                                         | one of "is_map", "index", "not_map"                    | defaults to is_map |
 | unique_id           | string            | a unique id for the map                        | needs to be unique                                     |                    |
-| issue_year          | integer or string | Date of issue                                  | numeric,  max 4 characters long. (e.g. 1923)           |                    |
+| issue_year          | integer or string | Date of issue                                  | numeric, max 4 characters long. (e.g. 1923)            |                    |
 | tag_list            | string            | comma separated string of tags to add          | e.g. "new york, foo, bar"                              |                    |
 | subject_area        | string            |                                                |                                                        |                    |
 | call_number         | string            |                                                |                                                        |                    |
@@ -2381,13 +2343,13 @@ The body of the request should be in JSON-API format with the following attribut
 
 Then either:
 
-|    Name    |  Type  |      Description      |               Notes               |     |
+| Name       | Type   | Description           | Notes                             |     |
 | ---------- | ------ | --------------------- | --------------------------------- | --- |
 | upload_url | string | URL to a remote image | e.g. "http://example.com/map.jpg" |     |
 
 OR
 
-|       Name       |  Type  |          Description           |   Notes   |     |
+| Name             | Type   | Description                    | Notes     |     |
 | ---------------- | ------ | ------------------------------ | --------- | --- |
 | upload           | string | encoded string                 | see below |     |
 | upload_file_name | string | filename with the base64 image |           |     |
@@ -2397,8 +2359,6 @@ Creation of base64 encoded image:
 image_data = Base64.encode64(File.open("map.jpg", "rb").read)
 upload = "data:image/png;base64,#{image_data}"
 'data' => {'type' => "maps", "attributes"=>{"description"=>"desc", "title"=>"new map", "upload" => upload, "upload_file_name" => "map.jpg"}}
-
-
 
 Example:
 
@@ -2426,7 +2386,7 @@ curl -H "Content-Type: application/json" -H 'Accept: application/json'  -X POST 
 
 If successful, the response should return the created map in json format
 
-***Errors***
+**_Errors_**
 
 Status 422 and message for example if the issue_year is not a number:
 
@@ -2443,35 +2403,32 @@ Status 422 and message for example if the issue_year is not a number:
 
 ### Update Map
 
+| Method | Definition         |
+| ------ | ------------------ |
+| PATCH  | /api/v1/maps/{:id} |
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| PATCH         |  /api/v1/maps/{:id} |
- 
-Updates a  map. Allows an editor to change title and description.
+Updates a map. Allows an editor to change title and description.
 Requires authentication.
-Only the owner of the map or an editor is authorized. 
+Only the owner of the map or an editor is authorized.
 
 **Parameters**
 
+| Name | Type    | Description                       | Required |
+| ---- | ------- | --------------------------------- | -------- |
+| id   | integer | the unique identifier for the map | required |
 
-| Name      	  |  Type      | Description  |  Required | 
-| ------------- | ---------- | ------------ |  -------- | 
-|   id     		  | integer    | the unique identifier for the map   | required |
+The body of the request should be in JSON-API format with optional attributes
 
-
-The body of the request should be in JSON-API format with optional attributes 
-
-|        Name         |       Type        |                  Description                   |                         Notes                          |                    |
+| Name                | Type              | Description                                    | Notes                                                  |                    |
 | ------------------- | ----------------- | ---------------------------------------------- | ------------------------------------------------------ | ------------------ |
-| title               | string            | the title of the map                           |                                                |                    |
+| title               | string            | the title of the map                           |                                                        |                    |
 | description         | string            | the title of the map                           |                                                        |                    |
 | source_uri          | string            | the URI to the source map page                 | e.g. the wiki page                                     |                    |
 | unique_id           | string            | the image filename taken from the source image |                                                        |                    |
 | date_depicted       | integer or string | Date the map is depicted                       | numeric, max 4 characters long. Used in search by date |                    |
-| map_type            | string            | string                                         | one of  "is_map", "index", "not_map"                   | defaults to is_map |
+| map_type            | string            | string                                         | one of "is_map", "index", "not_map"                    | defaults to is_map |
 | unique_id           | string            | a unique id for the map                        | needs to be unique                                     |                    |
-| issue_year          | integer or string | Date of issue                                  | numeric,  max 4 characters long. (e.g. 1923)           |                    |
+| issue_year          | integer or string | Date of issue                                  | numeric, max 4 characters long. (e.g. 1923)            |                    |
 | tag_list            | string            | comma separated string of tags to add          | e.g. "new york, foo, bar"                              |                    |
 | subject_area        | string            |                                                |                                                        |                    |
 | call_number         | string            |                                                |                                                        |                    |
@@ -2509,30 +2466,25 @@ curl -H "Content-Type: application/json" -H 'Accept: application/json' -X PATCH 
 
 If successful, the response should return the created map in json format
 
-***Errors***
+**_Errors_**
 
 Status 422 and message with errors.
 
-
 ### Destroy Map
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| DELETE         |  /api/v1/maps/{:id} |
- 
+| Method | Definition         |
+| ------ | ------------------ |
+| DELETE | /api/v1/maps/{:id} |
+
 Deletes a map. Allows an editor to delete a specific map.
 Requires authentication.
-Only the owner of the map or an editor is authorized. 
+Only the owner of the map or an editor is authorized.
 
 **Parameters**
 
-
-| Name      	    |  Type      | Description  |  Required | 
-| -------------  | ---------- | ------------ |  -------- | 
-|   id     		  | integer    | the unique identifier for the map   | required |
-
-
-
+| Name | Type    | Description                       | Required |
+| ---- | ------- | --------------------------------- | -------- |
+| id   | integer | the unique identifier for the map | required |
 
 **cURL Example**
 
@@ -2544,7 +2496,7 @@ curl -H "Content-Type: application/json" -H 'Accept: application/json' -X DELETE
 
 If successful, the response should return the created map in json format
 
-***Errors***
+**_Errors_**
 
 Status 422 and message with errors.
 
@@ -2556,16 +2508,16 @@ Authentication required.
 Administrator role authorized only.
 
 
-| Method       | Definition | 
-| ------------ | -------    | 
+| Method       | Definition |
+| ------------ | -------    |
 | PATCH         |  /api/v1/maps/{:id}/publish |
- 
+
 
 **Parameters**
 
 
-| Name      	    |  Type      | Description  |  Required | 
-| -------------  | ---------- | ------------ |  -------- | 
+| Name      	    |  Type      | Description  |  Required |
+| -------------  | ---------- | ------------ |  -------- |
 |   id     		  | integer    | the unique identifier for the map   | required |
 
 
@@ -2611,16 +2563,16 @@ Authentication required.
 Administrator role authorized only.
 
 
-| Method       | Definition | 
-| ------------ | -------    | 
+| Method       | Definition |
+| ------------ | -------    |
 | PATCH         |  /api/v1/maps/{:id}/unpublish |
- 
+
 
 **Parameters**
 
 
-| Name      	    |  Type      | Description  |  Required | 
-| -------------  | ---------- | ------------ |  -------- | 
+| Name      	    |  Type      | Description  |  Required |
+| -------------  | ---------- | ------------ |  -------- |
 |   id     		  | integer    | the unique identifier for the map   | required |
 
 
@@ -2663,23 +2615,21 @@ Other error
 
 ## Get a User
 
-
-| Method       | Definition | 
-| ------------ | ---------- | 
-| GET          |  /api/v1/users/{:id} |
+| Method | Definition          |
+| ------ | ------------------- |
+| GET    | /api/v1/users/{:id} |
 
 Returns a specified user by ID.
-Authentication required. 
+Authentication required.
 
 <!---
 Administrator authorized users will also see attributes for email and the roles the specified user has.
 -->
 
 **Parameters**
-| Name |   | Type    | Description                        | Required | Notes |
+| Name | | Type | Description | Required | Notes |
 |------|---|---------|------------------------------------|----------|-------|
-| id   |   | integer | the unique identifier for the user | required |       |
-
+| id | | integer | the unique identifier for the user | required | |
 
 **Example**
 
@@ -2687,7 +2637,7 @@ Administrator authorized users will also see attributes for email and the roles 
 
 **Response**
 
-A response of a user with normal user authorizion 
+A response of a user with normal user authorizion
 
 ```
 {
@@ -2706,8 +2656,9 @@ A response of a user with normal user authorizion
 	}
 }
 ```
+
 <!---
-A response of a user with admin user authorizion 
+A response of a user with admin user authorizion
 
 ```
 {
@@ -2762,42 +2713,44 @@ A response of a user with admin user authorizion
 
 **Response Elements**
 
-***Data***
+**_Data_**
 
-| Name          | Value | Description                    | Notes                                         |
-|---------------|-------|--------------------------------|-----------------------------------------------|
-| id            |       | The id for the user            |                                               | 
-| type          | users | the type of resource           |                                               | 
-| attributes    |       | Attributes of the user         | see table for more detail                     | 
+| Name       | Value | Description            | Notes                     |
+| ---------- | ----- | ---------------------- | ------------------------- |
+| id         |       | The id for the user    |                           |
+| type       | users | the type of resource   |                           |
+| attributes |       | Attributes of the user | see table for more detail |
+
 <!---
-| relationships |       | Showing the roles the user has | only admins can view the roles of other users | 
+| relationships |       | Showing the roles the user has | only admins can view the roles of other users |
 | included      |       | Giving more detail about role  | only admins can view the include roles        |
 -->
 
-***Attributes***
+**_Attributes_**
 
-| Name     | Type    | Description                                        | Notes                                              |
-|----------|---------|----------------------------------------------------|----------------------------------------------------|
-| login    | string  | the name of the user                               |                                                    |
-| enabled  | boolean | whether the user is enabled or not                 |                                                    |
-| provider | string  | if the user is from github, mediawiki, twitter etc |                                                    |
+| Name     | Type    | Description                                        | Notes |
+| -------- | ------- | -------------------------------------------------- | ----- |
+| login    | string  | the name of the user                               |       |
+| enabled  | boolean | whether the user is enabled or not                 |       |
+| provider | string  | if the user is from github, mediawiki, twitter etc |       |
+
 <!---
-| email    | string  | email                                              | Only admin users can view the email of other users |  
+| email    | string  | email                                              | Only admin users can view the email of other users |
 --->
 
 If the user is not found, the request will return the following response:
 
-| Status        | Response |
-| ------------- | -------- | 
-| 404	(not found) | ```{"errors":[{"title":"Not found","detail":"Couldn't find User with 'id'=2222"}]}```    |
+| Status          | Response                                                                          |
+| --------------- | --------------------------------------------------------------------------------- |
+| 404 (not found) | `{"errors":[{"title":"Not found","detail":"Couldn't find User with 'id'=2222"}]}` |
 
 <!---
 ## List Users
 
 Administrator authorized users
 
-| Method       | Definition | 
-| ------------ | -------    | 
+| Method       | Definition |
+| ------------ | -------    |
 | GET          |  /api/v1/users |
 
 **Parameters**
@@ -2822,7 +2775,7 @@ Administrator authorized users
 | page       |            | integer | the page number; use to get the next or previous page of search results | optional |                       |
 | per_page   |            | integer | number of results per page                                              | optional | default is 50         |
 
- 
+
 
 Notes: Enter optional text for the query, based on the search field chosen. The query text is case insensitive. This is a simple exact string text search.
 
@@ -2942,12 +2895,11 @@ indicates that 50 results have been found over 2 pages.
 | login    | string  | the name of the user                               |                                                    |
 | enabled  | boolean | whether the user is enabled or not                 |                                                    |
 | provider | string  | if the user is from github, mediawiki, twitter etc |                                                    |
-| email    | string  | email                                              | Only admin users can view the email of other users |  
+| email    | string  | email                                              | Only admin users can view the email of other users |
 
 -->
 
--------------
-
+---
 
 ## Imports
 
@@ -2960,31 +2912,31 @@ All require authentication and are restricted to administrators
 ### CSV Metadata Format
 
 Headers on first line. Comma separated, quote character is double quotes
+
 ```
 uuid,filename,title,description,date_depicted,source_uri,tag_list
 12304,100x70map.png,"old's Map","Description, with comma",1932,https://example.com/23,"old,maps,demo"
 ```
+
 Additional field names include:
 
- published_date, issue_year, subject_area, publisher, authors, scale, published_date, reprint_date, publication_place, metadata_projection, lat, lon, call_number, issue_year
-
+published_date, issue_year, subject_area, publisher, authors, scale, published_date, reprint_date, publication_place, metadata_projection, lat, lon, call_number, issue_year
 
 ### Show Import
 
-| Method       | Definition | 
-| ------------ | ---------- | 
-| GET          |  /api/v1/imports/{:id} |
+| Method | Definition            |
+| ------ | --------------------- |
+| GET    | /api/v1/imports/{:id} |
 
 Returns a specified import by ID.
-Authentication required. 
+Authentication required.
 Administrator authorized users only.
 
 **Parameters**
 
-| Name |   | Type    | Description                        | Required | Notes |
-|------|---|---------|------------------------------------|----------|-------|
-| id   |   | integer | the unique identifier for the import | required |       |
-
+| Name |     | Type    | Description                          | Required | Notes |
+| ---- | --- | ------- | ------------------------------------ | -------- | ----- |
+| id   |     | integer | the unique identifier for the import | required |       |
 
 **Example**
 
@@ -3068,48 +3020,46 @@ Example of a ready Import
 
 **Response Elements**
 
-***Data***
+**_Data_**
 
-| Name          | Value | Description                          | Notes                               |
-|---------------|-------|--------------------------------------|-------------------------------------|
-| id            |       | The id for the user                  |                                     |
-| type          | users | the type of resource                 |                                     |
-| attributes    |       | Attributes of the user               | see table for more detail           |
+| Name          | Value | Description                                                    | Notes                                        |
+| ------------- | ----- | -------------------------------------------------------------- | -------------------------------------------- |
+| id            |       | The id for the user                                            |                                              |
+| type          | users | the type of resource                                           |                                              |
+| attributes    |       | Attributes of the user                                         | see table for more detail                    |
 | relationships |       | Showing the maps the import imported, and user that created it | maps are populated if the status is finished |
-| link          |       | self link to api resource            |                                     | 
+| link          |       | self link to api resource                                      |                                              |
 
-***Attributes***
+**_Attributes_**
 
-| Name        | Type     | Description                                         | Notes                                            |
-|-------------|----------|-----------------------------------------------------|--------------------------------------------------|
-| name        | string   | The name                                            |                                                  |
-| status      | string   | status of the import                                | one of: "ready", "running", "finished", "failed" |
-| finished_at | datetime | when the import was finished                        |                                                  |
-| updated_at  | datetime | when the import was last updated                    |                                                  |
-| created_at  | datetime | when the import for first created                   |                                                  |
-| file_count  | integer  | the number of files due to be imported              |  only shown if status is "ready"                 |
-
+| Name        | Type     | Description                            | Notes                                            |
+| ----------- | -------- | -------------------------------------- | ------------------------------------------------ |
+| name        | string   | The name                               |                                                  |
+| status      | string   | status of the import                   | one of: "ready", "running", "finished", "failed" |
+| finished_at | datetime | when the import was finished           |                                                  |
+| updated_at  | datetime | when the import was last updated       |                                                  |
+| created_at  | datetime | when the import for first created      |                                                  |
+| file_count  | integer  | the number of files due to be imported | only shown if status is "ready"                  |
 
 If the import is not found, the request will return the following response:
 
-| Status        | Response |
-| ------------- | -------- | 
-| 404	(not found) | ```{"errors":[{"title":"Not found","detail":"Couldn't find Import with 'id'=2222"}]}```    |
-
+| Status          | Response                                                                            |
+| --------------- | ----------------------------------------------------------------------------------- |
+| 404 (not found) | `{"errors":[{"title":"Not found","detail":"Couldn't find Import with 'id'=2222"}]}` |
 
 ### List Imports
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          |  /api/v1/imports |
+| Method | Definition      |
+| ------ | --------------- |
+| GET    | /api/v1/imports |
 
 **Parameters**
 
 | Name       | values      | Type    | Description                                                             | Required | Notes                 |
-|------------|-------------|---------|-------------------------------------------------------------------------|----------|-----------------------|
+| ---------- | ----------- | ------- | ----------------------------------------------------------------------- | -------- | --------------------- |
 | sort_key   |             |         | the field that should be used to sort the results                       | optional | default is updated_at |
 |            | id          | string  | the id of the import                                                    | optional |                       |
-|            | name        | string  | the name  of the import                                              | optional |                       |
+|            | name        | string  | the name of the import                                                  | optional |                       |
 |            | user_id     | string  | the user_id of the user who creared the import                          | optional |                       |
 |            | status      | string  | the status of the import                                                | optional |                       |
 |            | finished_at | string  | when the import was finished                                            | optional |                       |
@@ -3119,9 +3069,6 @@ If the import is not found, the request will return the following response:
 |            | desc        |         | descending order                                                        | optional | default               |
 | page       |             | integer | the page number; use to get the next or previous page of search results | optional |                       |
 | per_page   |             | integer | number of results per page                                              | optional | default is 50         |
-
-
-
 
 **Request Example**
 
@@ -3171,37 +3118,33 @@ If the import is not found, the request will return the following response:
 }
 ```
 
-| Value | Description |
-| ------| -------     |
-| self | the link to the current page |
-| next |  the next page in the sequence |
-| last |  the last page in the sequence of pages |
-
+| Value | Description                            |
+| ----- | -------------------------------------- |
+| self  | the link to the current page           |
+| next  | the next page in the sequence          |
+| last  | the last page in the sequence of pages |
 
 ### List Import Maps
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          |  /api/v1/imports/{:id}/maps |
+| Method | Definition                 |
+| ------ | -------------------------- |
+| GET    | /api/v1/imports/{:id}/maps |
 
 Lists the maps that were imported. Only returns maps if the Import has "finished" status.
 
 **Parameters**
 
-| Name |   | Type    | Description                          | Required | Notes |   |
-|------|---|---------|------------------------------------- |----------|-------|---|
-| id   |   | integer | the unique identifier for the import | required |       |   |
+| Name |     | Type    | Description                          | Required | Notes |     |
+| ---- | --- | ------- | ------------------------------------ | -------- | ----- | --- |
+| id   |     | integer | the unique identifier for the import | required |       |     |
 
-
-| Name       | values      | Type    | Description                                                             | Required | Notes                 |
-|------------|-------------|---------|-------------------------------------------------------------------------|----------|-----------------------|
-| sort_order |             | string  | the order in which the results should appear sorted by created_at       | optional | default is desc       |
-|            | asc         |         | ascending order                                                         | optional |                       |
-|            | desc        |         | descending order                                                        | optional | default               |
-| page       |             | integer | the page number; use to get the next or previous page of search results | optional |                       |
-| per_page   |             | integer | number of results per page                                              | optional | default is 50         |
-
-
+| Name       | values | Type    | Description                                                             | Required | Notes           |
+| ---------- | ------ | ------- | ----------------------------------------------------------------------- | -------- | --------------- |
+| sort_order |        | string  | the order in which the results should appear sorted by created_at       | optional | default is desc |
+|            | asc    |         | ascending order                                                         | optional |                 |
+|            | desc   |         | descending order                                                        | optional | default         |
+| page       |        | integer | the page number; use to get the next or previous page of search results | optional |                 |
+| per_page   |        | integer | number of results per page                                              | optional | default is 50   |
 
 **Request Example**
 
@@ -3219,10 +3162,9 @@ Response where there are no maps (Import has not run, is "ready")
 
 ### Create Import
 
-
-| Method       | Definition | 
-| ------------ | -------    | 
-| POST         |  /api/v1/imports |
+| Method | Definition      |
+| ------ | --------------- |
+| POST   | /api/v1/imports |
 
 Adds the import passing in JSON-API for the GCP.
 Requires authentication.
@@ -3232,12 +3174,11 @@ Admin user only authorized.
 
 The body of the request should be in JSON-API format with the following attributes:
 
-| Name        | Type     | Description                                         | Notes                                            |
-|-------------|----------|-----------------------------------------------------|--------------------------------------------------|
-| name        | string   | Name of the Import                                  |      required                                    |
-| layer_ids   | array    | ids of layers to add the maps to                    |      optional                                    |
-| metadata    | csv file | CSV                                                 |      required                                    |
- 
+| Name      | Type     | Description                      | Notes    |
+| --------- | -------- | -------------------------------- | -------- |
+| name      | string   | Name of the Import               | required |
+| layer_ids | array    | ids of layers to add the maps to | optional |
+| metadata  | csv file | CSV                              | required |
 
 Example:
 
@@ -3294,13 +3235,11 @@ If successful, the response should return the created import with the "ready" st
 }
 ```
 
-
-
 ### Update Import
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| PATCH         |  /api/v1/imports/{:id} |
+| Method | Definition            |
+| ------ | --------------------- |
+| PATCH  | /api/v1/imports/{:id} |
 
 Updated the import passing in JSON-API for the import.
 Requires authentication.
@@ -3308,18 +3247,16 @@ Admin user only authorized.
 
 **Parameters**
 
-| Name |   | Type    | Description                          | Required | Notes |   |
-|------|---|---------|------------------------------------- |----------|-------|---|
-| id   |   | integer | the unique identifier for the import | required |       |   |
-
+| Name |     | Type    | Description                          | Required | Notes |     |
+| ---- | --- | ------- | ------------------------------------ | -------- | ----- | --- |
+| id   |     | integer | the unique identifier for the import | required |       |     |
 
 The body of the request should be in JSON-API format with the following attributes:
 
-| Name        | Type     | Description                                         | Notes                                            |
-|-------------|----------|-----------------------------------------------------|--------------------------------------------------|
-| name        | string   | The new name                                        | optional                                         |
-| layer_ids   | array    | array of ids for layers to add the maps to          | optional                                         |
-
+| Name      | Type   | Description                                | Notes    |
+| --------- | ------ | ------------------------------------------ | -------- |
+| name      | string | The new name                               | optional |
+| layer_ids | array  | array of ids for layers to add the maps to | optional |
 
 Example:
 
@@ -3345,26 +3282,23 @@ curl -H "Content-Type: application/json" -H 'Accept: application/json'  -X PATCH
 
 If successful, the response will be the updated import (see above)
 
-
 ### Destroy Import
 
-
-| Method       | Definition | 
-| ------------ | -------    | 
-| DELETE         |  /api/v1/imports |
+| Method | Definition      |
+| ------ | --------------- |
+| DELETE | /api/v1/imports |
 
 Deletes an import.
 Requires authentication.
 Admin user only authorized.
 
-> ** Note: imported maps and any created mosaic / layers will not be deleted when an import is deleted.
+> \*\* Note: imported maps and any created mosaic / layers will not be deleted when an import is deleted.
 
 **Parameters**
 
-| Name |   | Type    | Description                          | Required | Notes |   |
-|------|---|---------|------------------------------------- |----------|-------|---|
-| id   |   | integer | the unique identifier for the import | required |       |   |
-
+| Name |     | Type    | Description                          | Required | Notes |     |
+| ---- | --- | ------- | ------------------------------------ | -------- | ----- | --- |
+| id   |     | integer | the unique identifier for the import | required |       |     |
 
 **cURL Example**
 
@@ -3376,7 +3310,7 @@ curl -H "Content-Type: application/json" -X DELETE  http://mapwarper.net/api/v1/
 
 If successful, the response will be the deleted import (see above)
 
----------
+---
 
 ## Activity & Stats
 
@@ -3389,16 +3323,16 @@ Most calls do not require special authorisation (except the user stats call).
 Lists all activity across maps and control points, ordered by created_at desc
 Authentication required.
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          |  /api/v1/activity |
+| Method | Definition       |
+| ------ | ---------------- |
+| GET    | /api/v1/activity |
 
 **Parameters**
 
-| Name     |     | Type      | Description                                                             | Required   | Notes         |  
-|----------|-----|-----------|-------------------------------------------------------------------------|------------|---------------|  
-| page     |     | integer   | the page number; use to get the next or previous page of search results | optional   |               |  
-| per_page |     | integer   | number of results per page                                              | optional   | default is 50 |  
+| Name     |     | Type    | Description                                                             | Required | Notes         |
+| -------- | --- | ------- | ----------------------------------------------------------------------- | -------- | ------------- |
+| page     |     | integer | the page number; use to get the next or previous page of search results | optional |               |
+| per_page |     | integer | number of results per page                                              | optional | default is 50 |
 
 **cURL Example**
 
@@ -3439,11 +3373,10 @@ curl -H "Content-Type: application/json" -H 'Accept: application/json' -X GET  h
 
 **Response Elements**
 
-
-***Data***
+**_Data_**
 
 | Name           | Type     | Description                                          | Notes                                                 |
-|----------------|----------|------------------------------------------------------|-------------------------------------------------------|
+| -------------- | -------- | ---------------------------------------------------- | ----------------------------------------------------- |
 | id             | integer  | unique identifier of the activity                    |                                                       |
 | auditable_id   | integer  | unique identifier of the item the activity refers to | e.g. Gcp or Map                                       |
 | auditable_type | string   | The type ofitem the activity refers to               | e.g. Gcp or Map                                       |
@@ -3452,7 +3385,7 @@ curl -H "Content-Type: application/json" -H 'Accept: application/json' -X GET  h
 | version        | integer  | the version of the item                              | e.g. a created map will always be version 1 initially |
 | created_at     | datetime | the time of the action                               |                                                       |
 
-***Meta***
+**_Meta_**
 
 Useful in pagination. Will show the total number of results, for example if the request is limited to returning 25 maps:
 
@@ -3463,23 +3396,21 @@ Useful in pagination. Will show the total number of results, for example if the 
 }
 ```
 
-
-
 ### List Maps Activity
 
 Lists all activity across just maps, ordered by created_at desc
 Authentication required.
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          |  /api/v1/activity/maps |
+| Method | Definition            |
+| ------ | --------------------- |
+| GET    | /api/v1/activity/maps |
 
 **Parameters**
 
-| Name     |     | Type      | Description                                                             | Required   | Notes         |  
-|----------|-----|-----------|-------------------------------------------------------------------------|------------|---------------|  
-| page     |     | integer   | the page number; use to get the next or previous page of search results | optional   |               |  
-| per_page |     | integer   | number of results per page                                              | optional   | default is 50 |  
+| Name     |     | Type    | Description                                                             | Required | Notes         |
+| -------- | --- | ------- | ----------------------------------------------------------------------- | -------- | ------------- |
+| page     |     | integer | the page number; use to get the next or previous page of search results | optional |               |
+| per_page |     | integer | number of results per page                                              | optional | default is 50 |
 
 **cURL Example**
 
@@ -3524,20 +3455,19 @@ curl -H "Content-Type: application/json" -X GET  http://mapwarper.net/api/v1/act
 
 **Response Elements**
 
-
-***Data***
+**_Data_**
 
 | Name           | Type     | Description                                          | Notes                                                 |
-|----------------|----------|------------------------------------------------------|-------------------------------------------------------|
+| -------------- | -------- | ---------------------------------------------------- | ----------------------------------------------------- |
 | id             | integer  | unique identifier of the activity                    |                                                       |
-| auditable_id   | integer  | unique identifier of the item the activity refers to | e.g. Map                                       |
-| auditable_type | string   | The type ofitem the activity refers to               | e.g.  Map                                       |
+| auditable_id   | integer  | unique identifier of the item the activity refers to | e.g. Map                                              |
+| auditable_type | string   | The type ofitem the activity refers to               | e.g. Map                                              |
 | user_id        | integer  | unique identifier of the user doing the action       |                                                       |
 | action         | string   | the type of action                                   | one of: "create", "update", "destroy"                 |
 | version        | integer  | the version of the item                              | e.g. a created map will always be version 1 initially |
 | created_at     | datetime | the time of the action                               |                                                       |
 
-***Meta***
+**_Meta_**
 
 Useful in pagination. Will show the total number of results, for example if the request is limited to returning 25 maps:
 
@@ -3553,17 +3483,17 @@ Useful in pagination. Will show the total number of results, for example if the 
 Lists all activity across one specified map, ordered by created_at desc
 Authentication required.
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          |  /api/v1/activity/maps/{:id} |
+| Method | Definition                  |
+| ------ | --------------------------- |
+| GET    | /api/v1/activity/maps/{:id} |
 
 **Parameters**
 
-| Name     |     | Type      | Description                                                             | Required   | Notes         |  
-|----------|-----|-----------|-------------------------------------------------------------------------|------------|---------------|  
-| id       |     | integer   | unique identifier of the map                                            | required   |               | 
-| page     |     | integer   | the page number; use to get the next or previous page of search results | optional   |               |  
-| per_page |     | integer   | number of results per page                                              | optional   | default is 50 |  
+| Name     |     | Type    | Description                                                             | Required | Notes         |
+| -------- | --- | ------- | ----------------------------------------------------------------------- | -------- | ------------- |
+| id       |     | integer | unique identifier of the map                                            | required |               |
+| page     |     | integer | the page number; use to get the next or previous page of search results | optional |               |
+| per_page |     | integer | number of results per page                                              | optional | default is 50 |
 
 **cURL Example**
 
@@ -3604,20 +3534,19 @@ curl -H "Content-Type: application/json" -X GET  http://mapwarper.net/api/v1/act
 
 **Response Elements**
 
-
-***Data***
+**_Data_**
 
 | Name           | Type     | Description                                          | Notes                                                 |
-|----------------|----------|------------------------------------------------------|-------------------------------------------------------|
+| -------------- | -------- | ---------------------------------------------------- | ----------------------------------------------------- |
 | id             | integer  | unique identifier of the activity                    |                                                       |
-| auditable_id   | integer  | unique identifier of the item the activity refers to |                                                    |
-| auditable_type | string   | The type ofitem the activity refers to               | e.g.  Map                                       |
+| auditable_id   | integer  | unique identifier of the item the activity refers to |                                                       |
+| auditable_type | string   | The type ofitem the activity refers to               | e.g. Map                                              |
 | user_id        | integer  | unique identifier of the user doing the action       |                                                       |
 | action         | string   | the type of action                                   | one of: "create", "update", "destroy"                 |
 | version        | integer  | the version of the item                              | e.g. a created map will always be version 1 initially |
 | created_at     | datetime | the time of the action                               |                                                       |
 
-***Meta***
+**_Meta_**
 
 Useful in pagination. Will show the total number of results, for example if the request is limited to returning 25 maps:
 
@@ -3628,23 +3557,22 @@ Useful in pagination. Will show the total number of results, for example if the 
 }
 ```
 
-
 ### List User Activity
 
 Lists all activity for one user, ordered by created_at desc
 Authentication required.
 
-| Method       | Definition | 
-| ------------ | -------    | 
-| GET          |  /api/v1/activity/users/{:id} |
+| Method | Definition                   |
+| ------ | ---------------------------- |
+| GET    | /api/v1/activity/users/{:id} |
 
 **Parameters**
 
-| Name     |     | Type      | Description                                                             | Required   | Notes         |  
-|----------|-----|-----------|-------------------------------------------------------------------------|------------|---------------|  
-| id       |     | integer   | unique identifier of the user                                           | required   |               | 
-| page     |     | integer   | the page number; use to get the next or previous page of search results | optional   |               |  
-| per_page |     | integer   | number of results per page                                              | optional   | default is 50 |  
+| Name     |     | Type    | Description                                                             | Required | Notes         |
+| -------- | --- | ------- | ----------------------------------------------------------------------- | -------- | ------------- |
+| id       |     | integer | unique identifier of the user                                           | required |               |
+| page     |     | integer | the page number; use to get the next or previous page of search results | optional |               |
+| per_page |     | integer | number of results per page                                              | optional | default is 50 |
 
 **cURL Example**
 
@@ -3685,11 +3613,10 @@ curl -H "Content-Type: application/json" -H 'Accept: application/json' -X GET  h
 
 **Response Elements**
 
-
-***Data***
+**_Data_**
 
 | Name           | Type     | Description                                          | Notes                                                 |
-|----------------|----------|------------------------------------------------------|-------------------------------------------------------|
+| -------------- | -------- | ---------------------------------------------------- | ----------------------------------------------------- |
 | id             | integer  | unique identifier of the activity                    |                                                       |
 | auditable_id   | integer  | unique identifier of the item the activity refers to |                                                       |
 | auditable_type | string   | The type ofitem the activity refers to               |                                                       |
@@ -3698,7 +3625,7 @@ curl -H "Content-Type: application/json" -H 'Accept: application/json' -X GET  h
 | version        | integer  | the version of the item                              | e.g. a created map will always be version 1 initially |
 | created_at     | datetime | the time of the action                               |                                                       |
 
-***Meta***
+**_Meta_**
 
 Useful in pagination. Will show the total number of results, for example if the request is limited to returning 25 maps:
 
@@ -3708,6 +3635,7 @@ Useful in pagination. Will show the total number of results, for example if the 
   "total_pages": 2
 }
 ```
+
 <!---
 ### User Statistics
 
@@ -3715,8 +3643,8 @@ Returns statistics of all users based on combined activity.
 Authentication required.
 Administrator role only authorized
 
-| Method       | Definition | 
-| ------------ | -------    | 
+| Method       | Definition |
+| ------------ | -------    |
 | GET          |  /api/v1/stats |
 
 **Parameters**

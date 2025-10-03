@@ -6,8 +6,7 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable,
          :omniauthable, omniauth_providers: %i[osm_oauth2 facebook github]
 
-  # TODO: Migrate to devise token authentication for Rails 8
-  # acts_as_token_authenticatable
+  before_create :generate_authentication_token
 
   has_many :permissions
   has_many :roles, through: :permissions
@@ -207,6 +206,44 @@ class User < ActiveRecord::Base
     files.inject(0) { |result, file| result + File.size(file) }
   end
 
+  def ensure_authentication_token!
+    return authentication_token if authentication_token.present?
+
+    token = generate_unique_authentication_token
+    update_columns(authentication_token: token)
+    self.authentication_token = token
+  end
+
+  def reset_authentication_token!
+    update!(authentication_token: generate_unique_authentication_token)
+    authentication_token
+  end
+
+  def valid_authentication_token?(token)
+    return false if token.blank? || authentication_token.blank?
+
+    return false unless authentication_token.bytesize == token.bytesize
+
+    ActiveSupport::SecurityUtils.secure_compare(authentication_token, token)
+  end
+
+  def self.authenticate_by_token(identifier: nil, authentication_token:)
+    return nil if authentication_token.blank?
+
+    user = if identifier.present?
+             find_by(id: identifier) || find_by(email: identifier)
+           else
+             find_by(authentication_token: authentication_token)
+           end
+    return nil unless user&.valid_authentication_token?(authentication_token)
+
+    user
+  end
+
+  def self.ensure_authentication_tokens!
+    find_each(&:ensure_authentication_token!)
+  end
+
   protected
 
   def is_allowed_in?
@@ -219,6 +256,19 @@ class User < ActiveRecord::Base
     own_maps.each do |map|
       logger.debug "deleting map #{map.inspect}"
       map.destroy
+    end
+  end
+
+  private
+
+  def generate_authentication_token
+    self.authentication_token ||= generate_unique_authentication_token
+  end
+
+  def generate_unique_authentication_token
+    loop do
+      token = SecureRandom.urlsafe_base64(22)
+      break token unless self.class.exists?(authentication_token: token)
     end
   end
 end

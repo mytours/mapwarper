@@ -67,6 +67,7 @@ class OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def sign_in_render_or_redirect
     # sign_in_and_redirect @user, :event => :authentication
     sign_in @user, event: :authentication
+    @user.reset_authentication_token!
 
     if %w[inAppBrowser newWindow].include?(omniauth_window_type)
       render layout: nil, template: 'devise/omniauth_external_window'

@@ -6,8 +6,8 @@ class LayersControllerTest < ActionController::TestCase
   tests Api::V1::LayersController
 
   setup do
-    @layer_user = FactoryGirl.create(:user)
-    @layer = FactoryGirl.create(:layer_with_maps, user_id: @layer_user.id)
+    @layer_user = FactoryBot.create(:user)
+    @layer = FactoryBot.create(:layer_with_maps, user_id: @layer_user.id)
     request.env['devise.mapping'] = Devise.mappings[:user]
   end
 
@@ -17,8 +17,8 @@ class LayersControllerTest < ActionController::TestCase
 
   class CollectionTest < LayersControllerTest
     setup do
-      @warped_layer = FactoryGirl.create(:layer_with_warped_maps)
-      @index_layers = FactoryGirl.create_list(:index_layer, 5)
+      @warped_layer = FactoryBot.create(:layer_with_warped_maps)
+      @index_layers = FactoryBot.create_list(:index_layer, 5)
     end
 
     # index
@@ -139,7 +139,7 @@ class LayersControllerTest < ActionController::TestCase
     end
 
     test 'update with maps' do
-      warped_map = FactoryGirl.create(:warped_map)
+      warped_map = FactoryBot.create(:warped_map)
       before_count = @layer.maps.count
 
       patch 'update',
@@ -197,7 +197,7 @@ class LayersControllerTest < ActionController::TestCase
     end
 
     test 'update with maps' do
-      warped_map = FactoryGirl.create(:warped_map)
+      warped_map = FactoryBot.create(:warped_map)
       before_count = @layer.maps.count
 
       patch 'update',
@@ -256,7 +256,7 @@ class LayersControllerTest < ActionController::TestCase
     end
 
     test 'create with maps' do
-      warped_map = FactoryGirl.create(:warped_map)
+      warped_map = FactoryBot.create(:warped_map)
       assert_difference('Layer.count', 1) do
         post 'create', params: { 'data' => { 'type' => 'layers', 'attributes' => { name: 'new layer', description: 'bar' },
                                              :map_ids => [warped_map.id] } }
@@ -282,7 +282,7 @@ class LayersControllerTest < ActionController::TestCase
     end
 
     test 'merge' do
-      dest_layer = FactoryGirl.create(:layer_with_warped_maps)
+      dest_layer = FactoryBot.create(:layer_with_warped_maps)
       assert_equal 1, dest_layer.maps.count
       Map.any_instance.stubs(:warped_filename).returns(File.join(dest_layer.maps.first.warped_dir,
                                                                  '100x70map_warped.tif'))

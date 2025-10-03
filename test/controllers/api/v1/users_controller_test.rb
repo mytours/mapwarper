@@ -6,14 +6,14 @@ class UsersControllerTest < ActionController::TestCase
   tests Api::V1::UsersController
 
   setup do
-    @user = FactoryGirl.create(:user)
+    @user = FactoryBot.create(:user)
     request.env['devise.mapping'] = Devise.mappings[:user]
     sign_in @user
   end
 
   def admin_sign_in
     sign_out @user
-    @admin_user = FactoryGirl.create(:admin)
+    @admin_user = FactoryBot.create(:admin)
     request.env['devise.mapping'] = Devise.mappings[:admin]
     sign_in @admin_user
   end

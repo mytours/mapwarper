@@ -170,11 +170,11 @@ The asset pipeline has been modernized:
 ### Token Authentication
 
 - `simple_token_authentication` gem removed (incompatible with Rails 8)
-- Implement Devise-based tokens:
-  - Enable `:token_authenticatable` (or custom token strategy) on `User` and add an `authentication_token` column with unique index.
-  - Provide a rake task/console helper to backfill tokens for existing users (`User.find_each(&:ensure_authentication_token!)`).
-  - Replace API token checks with `User.authenticate_by(authentication_token:)` or equivalent Devise helper.
-  - Update request specs and API docs to cover token issuance/rotation workflows.
+- Devise-based tokens:
+  - `User` now generates and rotates `authentication_token` values via secure helpers.
+  - Token authentication supports `Authorization: Bearer` and legacy `X-User-Token` headers.
+  - Added `users:backfill_tokens` rake task and `User.ensure_authentication_tokens!` console helper.
+  - API controllers rely on a shared concern for token auth, with request specs and docs updated to cover issuance and rotation.
 
 ### OAuth Integration
 

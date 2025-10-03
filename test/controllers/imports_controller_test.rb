@@ -6,10 +6,10 @@ class ImportsControllerTest < ActionController::TestCase
   tests ImportsController
 
   setup do
-    @user = FactoryGirl.create(:admin)
+    @user = FactoryBot.create(:admin)
     request.env['devise.mapping'] = Devise.mappings[:admin]
     sign_in @user
-    @import = FactoryGirl.create(:import, user: @user)
+    @import = FactoryBot.create(:import, user: @user)
     @import.save
   end
 
@@ -61,8 +61,8 @@ class ImportsControllerTest < ActionController::TestCase
   end
 
   test 'maps of import' do
-    map = FactoryGirl.create(:basic_map)
-    map2 = FactoryGirl.create(:unstubbed_map)
+    map = FactoryBot.create(:basic_map)
+    map2 = FactoryBot.create(:unstubbed_map)
     @import.maps << [map, map2]
     get :maps, params: { id: @import.id }
     assert_response :ok

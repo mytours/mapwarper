@@ -6,12 +6,12 @@ class GcpsControllerTest < ActionController::TestCase
   tests Api::V1::GcpsController
 
   setup do
-    @map =    FactoryGirl.create(:warped_map)
-    @gcp =    FactoryGirl.create(:gcp_1, map: @map)
-    @gcp_2  = FactoryGirl.create(:gcp_2, map: @map)
-    @gcp_3  = FactoryGirl.create(:gcp_3, map: @map)
+    @map =    FactoryBot.create(:warped_map)
+    @gcp =    FactoryBot.create(:gcp_1, map: @map)
+    @gcp_2  = FactoryBot.create(:gcp_2, map: @map)
+    @gcp_3  = FactoryBot.create(:gcp_3, map: @map)
 
-    @user = FactoryGirl.create(:user)
+    @user = FactoryBot.create(:user)
     request.env['devise.mapping'] = Devise.mappings[:user]
     sign_in @user
   end

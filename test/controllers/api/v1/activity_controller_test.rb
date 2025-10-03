@@ -25,13 +25,13 @@ class ActivityControllerTest < ActionController::TestCase
   end
 
   test 'for_user' do
-    user = FactoryGirl.create(:user)
+    user = FactoryBot.create(:user)
     get 'for_user', params: { id: user.id }
     assert_response :success
   end
 
   test 'for_map' do
-    map = FactoryGirl.create(:available_map)
+    map = FactoryBot.create(:available_map)
     get 'for_map', params: { id: map.id }
     assert_response :success
   end

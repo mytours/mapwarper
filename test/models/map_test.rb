@@ -2,11 +2,11 @@ require 'test_helper'
 
 class MapTest < ActiveSupport::TestCase
   setup do
-    @map = FactoryGirl.create(:available_map)
+    @map = FactoryBot.create(:available_map)
 
-    FactoryGirl.create(:gcp_1, map: @map)
-    FactoryGirl.create(:gcp_2, map: @map)
-    FactoryGirl.create(:gcp_3, map: @map)
+    FactoryBot.create(:gcp_1, map: @map)
+    FactoryBot.create(:gcp_2, map: @map)
+    FactoryBot.create(:gcp_3, map: @map)
   end
 
   teardown do
@@ -35,7 +35,7 @@ class MapTest < ActiveSupport::TestCase
 
   test 'cannot have two maps with the same filename' do
     assert_raise ActiveRecord::RecordInvalid do
-      @copymap = FactoryGirl.create(:available_map, title: 'copied')
+      @copymap = FactoryBot.create(:available_map, title: 'copied')
     end
   end
 

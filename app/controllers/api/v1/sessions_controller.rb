@@ -1,7 +1,8 @@
 class Api::V1::SessionsController < Devise::SessionsController
   include ActionController::Serialization
+  include ApiTokenAuthenticatable
 
-  acts_as_token_authentication_handler_for User, fallback: :none, except: %i[create new]
+  skip_before_action :authenticate_with_token, only: %i[new create]
   skip_before_action :verify_authenticity_token
   skip_before_action :verify_signed_out_user, only: [:destroy]
 
@@ -25,9 +26,7 @@ class Api::V1::SessionsController < Devise::SessionsController
   def create
     self.resource = warden.authenticate!(auth_options)
     sign_in(resource_name, resource)
-
-    current_user.update authentication_token: nil
-
+    current_user.reset_authentication_token!
     render json: current_user,
            meta: { auth_token: current_user.authentication_token }
   end
@@ -36,7 +35,7 @@ class Api::V1::SessionsController < Devise::SessionsController
   # invalidates the previous token
   def destroy
     if current_user
-      current_user.update authentication_token: nil
+      current_user.reset_authentication_token!
       (Devise.sign_out_all_scopes ? sign_out : sign_out(resource_name))
       render json: {}.to_json, status: :ok
     else

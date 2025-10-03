@@ -1,7 +1,8 @@
 class Api::V1::ApiController < ActionController::API
   include ActionController::Serialization
+  include Devise::Controllers::Helpers
+  include ApiTokenAuthenticatable
 
-  acts_as_token_authentication_handler_for User, fallback: :none
   before_action :check_protocol
 
   def check_administrator_role
@@ -13,7 +14,8 @@ class Api::V1::ApiController < ActionController::API
   end
 
   def check_role(role)
-    return if user_signed_in? && @current_user.has_role?(role)
+    user = current_user || @current_user
+    return if user_signed_in? && user&.has_role?(role)
 
     permission_denied
   end
