@@ -135,6 +135,7 @@ GEM
       warden (~> 1.2.3)
     devise-encryptable (0.2.0)
       devise (>= 2.1.0)
+    dotenv (3.1.8)
     drb (2.2.3)
     erb (5.0.2)
     erubi (1.13.1)
@@ -547,6 +548,7 @@ DEPENDENCIES
   csv
   devise (>= 4.9)
   devise-encryptable
+  dotenv
   factory_bot_rails
   georuby
   hcaptcha

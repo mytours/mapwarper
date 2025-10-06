@@ -53,6 +53,8 @@ test/test_files/*
 test/fixtures/data/dst/*
 !test/fixtures/data/dst/.keep
 
+# General environment files
+.env
 
 # docker env files
 .env.postgres

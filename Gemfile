@@ -94,6 +94,7 @@ gem 'redcarpet', '>= 3.5.1'
 
 gem 'csv'
 
+gem 'dotenv'
 gem 'matrix'
 gem 'puma'
 

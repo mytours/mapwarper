@@ -35,7 +35,7 @@ class LayersControllerTest < ActionController::TestCase
       assert_not_nil assigns(:layers)
       body = JSON.parse(response.body)
       assert_equal Layer.count, body['data'].length
-      assert_equal @index_layers.first.name, body['data'][0]['attributes']['name']
+      assert_equal @index_layers.sort_by(&:name).first.name, body['data'][0]['attributes']['name']
     end
 
     # NOTE: percent sorting only gets those with maps in them

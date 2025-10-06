@@ -339,14 +339,14 @@ class MapsControllerTest < ActionController::TestCase
       assert_not_nil assigns(:maps)
       body = JSON.parse(response.body)
       assert_equal 7, body['data'].length
-      assert_equal @index_maps.first.title, body['data'][0]['attributes']['title']
+      assert_equal @index_maps.sort_by(&:title).first.title, body['data'][0]['attributes']['title']
       assert_equal 'title', body['data'][6]['attributes']['title']
 
       get :index, params: { sort_order: 'desc', sort_key: 'title', format: :json }
       assert_response :success
       body = JSON.parse(response.body)
       assert_equal 7, body['data'].length
-      assert_equal @index_maps.first.title, body['data'][6]['attributes']['title']
+      assert_equal @index_maps.sort_by(&:title).first.title, body['data'][6]['attributes']['title']
       assert_equal 'title', body['data'][0]['attributes']['title']
     end
 
@@ -356,8 +356,8 @@ class MapsControllerTest < ActionController::TestCase
       assert_not_nil assigns(:maps)
       body = JSON.parse(response.body)
       assert_equal 5, body['data'].length
-      assert_equal @index_maps.first.title, body['data'][0]['attributes']['title']
-      assert_equal @index_maps.last.title, body['data'][4]['attributes']['title']
+      assert_equal @index_maps.sort_by(&:title).first.title, body['data'][0]['attributes']['title']
+      assert_equal @index_maps.sort_by(&:title).last.title, body['data'][4]['attributes']['title']
     end
 
     test 'get warped' do

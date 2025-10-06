@@ -39,8 +39,9 @@ class Import < ActiveRecord::Base
   end
 
   def prepare_run
-    update_column(:status, :running)
-    update_column(:log_filename, logfile)
+    self.status = :running
+    self.log_filename = logfile
+    save
   end
 
   def finish_import(_options)

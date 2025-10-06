@@ -99,6 +99,9 @@ class Map < ActiveRecord::Base
     end
     self.upload = img_upload
 
+    # Store the downloaded file for dimension calculation
+    @downloaded_file = img_upload
+
     self.source_uri = (source_uri.presence || upload_url)
 
     return unless Map.find_by_source_uri(upload_url)
@@ -108,7 +111,8 @@ class Map < ActiveRecord::Base
   end
 
   def do_download_remote_image
-    io = open(URI.parse(upload_url))
+    require 'open-uri'
+    io = URI.open(upload_url)
     def io.original_filename
       filename = base_uri.path.split('/').last
 
@@ -130,7 +134,8 @@ class Map < ActiveRecord::Base
   def save_dimensions
     if ['image/jp2', 'image/jpeg', 'image/tiff', 'image/png', 'image/gif',
         'image/bmp'].include?(upload.content_type.to_s)
-      tempfile = upload.queued_for_write[:original]
+      # Try to get the file from queued uploads or from the downloaded file
+      tempfile = upload.queued_for_write[:original] || @downloaded_file
       unless tempfile.nil?
         geometry = Paperclip::Geometry.from_file(tempfile)
         self.width = geometry.width.to_i
