@@ -557,8 +557,8 @@ class LayersController < ApplicationController
       map.applyConfigOptions
 
       # logger.info map.getProjection
-      map.setMetaData('wms_onlineresource',
-                      'http://' + request.host_with_port + '/layers/wms2')
+      map.web.metadata.set('wms_onlineresource',
+                           'http://' + request.host_with_port + '/layers/wms2')
       if @layer_name
         single_layer = Layer.find(@layer_name.to_s.delete('layer_'))
         raster = Mapscript::LayerObj.new(map)
@@ -568,7 +568,6 @@ class LayersController < ApplicationController
         raster.tileitem = 'Location'
 
         raster.status = Mapscript::MS_ON
-        raster.dump = Mapscript::MS_TRUE
 
         raster.metadata.set('wcs_formats', 'GEOTIFF')
         raster.metadata.set('wms_title', single_layer.name)
@@ -593,7 +592,6 @@ class LayersController < ApplicationController
           raster.tileitem = 'Location'
 
           raster.status = Mapscript::MS_ON
-          raster.dump = Mapscript::MS_TRUE
 
           raster.metadata.set('wcs_formats', 'GEOTIFF')
           # raster.metadata.set('wms_title', "layer "+layer.id.to_s)
@@ -676,8 +674,8 @@ class LayersController < ApplicationController
     map.setConfigOption('PROJ_LIB', projfile)
     map.applyConfigOptions
 
-    map.setMetaData('wms_onlineresource',
-                    'http://' + request.host_with_port + "/layers/wms/#{@layer.id}")
+    map.web.metadata.set('wms_onlineresource',
+                         'http://' + request.host_with_port + "/layers/wms/#{@layer.id}")
 
     raster = Mapscript::LayerObj.new(map)
     raster.name = 'image'
@@ -687,7 +685,6 @@ class LayersController < ApplicationController
     raster.tileitem = 'Location'
 
     raster.status = Mapscript::MS_ON
-    raster.dump = Mapscript::MS_TRUE
 
     raster.metadata.set('wcs_formats', 'GEOTIFF')
     raster.metadata.set('wms_title', @layer.name)

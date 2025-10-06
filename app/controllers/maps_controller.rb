@@ -859,8 +859,8 @@ class MapsController < ApplicationController
     mapsv.setConfigOption('PROJ_LIB', projfile)
     mapsv.applyConfigOptions
     rel_url_root = ActionController::Base.relative_url_root.presence || ''
-    mapsv.setMetaData('wms_onlineresource',
-                      'http://' + request.host_with_port + rel_url_root + "/maps/wms/#{@map.id}")
+    mapsv.web.metadata.set('wms_onlineresource',
+                           'http://' + request.host_with_port + rel_url_root + "/maps/wms/#{@map.id}")
 
     raster = Mapscript::LayerObj.new(mapsv)
     raster.name = 'image'
@@ -875,7 +875,6 @@ class MapsController < ApplicationController
                   end
 
     raster.status = Mapscript::MS_ON
-    raster.dump = Mapscript::MS_TRUE
     raster.metadata.set('wcs_formats', 'GEOTIFF')
     raster.metadata.set('wms_title', @map.title)
     raster.metadata.set('wms_srs', 'EPSG:4326 EPSG:3857 EPSG:4269 EPSG:900913')
