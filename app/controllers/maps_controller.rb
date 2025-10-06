@@ -1,20 +1,20 @@
 class MapsController < ApplicationController
   layout 'mapdetail',
-         only: %i[show edit preview warp clip align activity warped export metadata comments]
+         only: %i[show edit warp clip align warped export metadata comments]
 
   before_action :store_location, only: %i[warp align clip export edit comments]
 
   before_action :authenticate_user!,
-                only: %i[new create edit update destroy delete warp rectify clip align warp_align mask_map
+                only: %i[new create edit update destroy delete warp rectify clip align warp_aligned mask_map
                          delete_mask save_mask save_mask_and_warp set_rough_state set_rough_centroid publish trace id map_type]
 
   before_action :check_administrator_role, only: %i[publish csv]
 
   before_action :find_map_if_available,
-                except: %i[show index wms tile mapserver_wms warp_aligned status new create update edit
+                except: %i[show index wms tile warp_aligned status new create update edit
                            tag geosearch csv]
 
-  before_action :check_link_back, only: %i[show warp clip align warped export activity]
+  before_action :check_link_back, only: %i[show warp clip align warped export]
   before_action :check_if_map_is_editable, only: %i[edit update map_type]
   before_action :check_if_map_can_be_deleted, only: %i[destroy delete]
   # skip_before_action :verify_authenticity_token, :only => [:save_mask, :delete_mask, :save_mask_and_warp, :mask_map, :rectify, :set_rough_state, :set_rough_centroid]
@@ -26,16 +26,6 @@ class MapsController < ApplicationController
   include SortHelper
 
   require 'digest/sha1'
-  caches_action :wms,
-                unless: -> { request.params['request'] == 'GetCapabilities' },
-                cache_path: proc { |c|
-                  string =  c.params.to_s
-                  { status: c.params['status'] || c.params['STATUS'], tag: Digest::SHA1.hexdigest(string) }
-                }
-  caches_action :tile, cache_path: proc { |c|
-    string = c.params.to_s
-    { tag: Digest::SHA1.hexdigest(string) }
-  }
 
   ###############
   #
@@ -802,60 +792,21 @@ class MapsController < ApplicationController
       return false
     end
 
-    ows = Mapscript::OWSRequest.new
-
-    ok_params = {}
-    # params.each {|k,v| k.upcase! } frozen string error
-    params.each { |k, v| ok_params[k.upcase] = v }
-
-    %i[request version transparency service srs width height bbox format srs].each do |key|
-      ows.setParameter(key.to_s, ok_params[key.to_s.upcase]) unless ok_params[key.to_s.upcase].nil?
+    # Skip caching for GetCapabilities requests
+    if params['REQUEST'] == 'GetCapabilities' || params['request'] == 'GetCapabilities'
+      render_wms_response
+      return
     end
 
-    ows.setParameter('VeRsIoN', '1.1.1')
-    ows.setParameter('STYLES', '')
-    ows.setParameter('LAYERS', 'image')
-    ows.setParameter('COVERAGE', 'image')
+    # Generate cache key from relevant params
+    cache_key = wms_cache_key(@map.id, status, params)
 
-    mapsv = Mapscript::MapObj.new(Rails.root.join('lib/mapserver/wms.map').to_s)
-    projfile = Rails.root.join('lib/proj').to_s
-    mapsv.setConfigOption('PROJ_LIB', projfile)
-    # map.setProjection("init=epsg:900913")
-    mapsv.applyConfigOptions
-    rel_url_root = ActionController::Base.relative_url_root.presence || ''
-    mapsv.setMetaData('wms_onlineresource',
-                      'http://' + request.host_with_port + rel_url_root + "/maps/wms/#{@map.id}")
-
-    raster = Mapscript::LayerObj.new(mapsv)
-    raster.name = 'image'
-    raster.type = Mapscript::MS_LAYER_RASTER
-    raster.addProcessing('RESAMPLE=BILINEAR')
-
-    if status == 'unwarped'
-      raster.data = @map.unwarped_filename
-
-      # HTTP CACHING for unwarped image (used by passenger and browser)
-      expires_in 10.months, public: true
-
-    else # show the warped map
-      raster.data = @map.warped_filename
+    # Use low-level caching
+    cached_response = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      generate_wms_response
     end
 
-    raster.status = Mapscript::MS_ON
-    raster.dump = Mapscript::MS_TRUE
-    raster.metadata.set('wcs_formats', 'GEOTIFF')
-    raster.metadata.set('wms_title', @map.title)
-    raster.metadata.set('wms_srs', 'EPSG:4326 EPSG:3857 EPSG:4269 EPSG:900913')
-    # raster.debug = Mapscript::MS_TRUE
-    raster.setProcessingKey('CLOSE_CONNECTION', 'ALWAYS')
-
-    Mapscript.msIO_installStdoutToBuffer
-    mapsv.OWSDispatch(ows)
-    content_type = Mapscript.msIO_stripStdoutBufferContentType || 'text/plain'
-    result_data = Mapscript.msIO_getStdoutBufferBytes
-
-    send_data result_data, type: content_type, disposition: 'inline'
-    Mapscript.msIO_resetHandlers
+    send_data cached_response[:data], type: cached_response[:content_type], disposition: 'inline'
   end
 
   def tile
@@ -880,6 +831,69 @@ class MapsController < ApplicationController
   end
 
   private
+
+  def wms_cache_key(map_id, status, request_params)
+    cache_params = request_params.slice(:REQUEST, :request, :VERSION, :version, :BBOX, :bbox,
+                                        :WIDTH, :width, :HEIGHT, :height, :FORMAT, :format,
+                                        :SRS, :srs, :TRANSPARENCY, :transparency)
+    "wms/map/#{map_id}/#{status}/#{Digest::SHA1.hexdigest(cache_params.to_s)}"
+  end
+
+  def generate_wms_response
+    ows = Mapscript::OWSRequest.new
+
+    ok_params = {}
+    params.each { |k, v| ok_params[k.upcase] = v }
+
+    %i[request version transparency service srs width height bbox format srs].each do |key|
+      ows.setParameter(key.to_s, ok_params[key.to_s.upcase]) unless ok_params[key.to_s.upcase].nil?
+    end
+
+    ows.setParameter('VeRsIoN', '1.1.1')
+    ows.setParameter('STYLES', '')
+    ows.setParameter('LAYERS', 'image')
+    ows.setParameter('COVERAGE', 'image')
+
+    mapsv = Mapscript::MapObj.new(Rails.root.join('lib/mapserver/wms.map').to_s)
+    projfile = Rails.root.join('lib/proj').to_s
+    mapsv.setConfigOption('PROJ_LIB', projfile)
+    mapsv.applyConfigOptions
+    rel_url_root = ActionController::Base.relative_url_root.presence || ''
+    mapsv.setMetaData('wms_onlineresource',
+                      'http://' + request.host_with_port + rel_url_root + "/maps/wms/#{@map.id}")
+
+    raster = Mapscript::LayerObj.new(mapsv)
+    raster.name = 'image'
+    raster.type = Mapscript::MS_LAYER_RASTER
+    raster.addProcessing('RESAMPLE=BILINEAR')
+
+    status = params['STATUS'].to_s.downcase || 'unwarped'
+    raster.data = if status == 'unwarped'
+                    @map.unwarped_filename
+                  else # show the warped map
+                    @map.warped_filename
+                  end
+
+    raster.status = Mapscript::MS_ON
+    raster.dump = Mapscript::MS_TRUE
+    raster.metadata.set('wcs_formats', 'GEOTIFF')
+    raster.metadata.set('wms_title', @map.title)
+    raster.metadata.set('wms_srs', 'EPSG:4326 EPSG:3857 EPSG:4269 EPSG:900913')
+    raster.setProcessingKey('CLOSE_CONNECTION', 'ALWAYS')
+
+    Mapscript.msIO_installStdoutToBuffer
+    mapsv.OWSDispatch(ows)
+    content_type = Mapscript.msIO_stripStdoutBufferContentType || 'text/plain'
+    result_data = Mapscript.msIO_getStdoutBufferBytes
+    Mapscript.msIO_resetHandlers
+
+    { data: result_data, content_type: content_type }
+  end
+
+  def render_wms_response
+    response = generate_wms_response
+    send_data response[:data], type: response[:content_type], disposition: 'inline'
+  end
 
   def rectify_main
     resample_param = params[:resample_options]

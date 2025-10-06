@@ -14,15 +14,6 @@ class LayersController < ApplicationController
   include SortHelper
 
   require 'digest/sha1'
-  caches_action :wms,
-                cache_path: proc { |c|
-                  string =  c.params.to_s
-                  { tag: Digest::SHA1.hexdigest(string) }
-                }
-  caches_action :tile, cache_path: proc { |c|
-    string = c.params.to_s
-    { tag: Digest::SHA1.hexdigest(string) }
-  }
 
   def comments
     @html_title = 'comments'
@@ -519,55 +510,21 @@ class LayersController < ApplicationController
       return false
     end
 
-    ows = Mapscript::OWSRequest.new
-
-    ok_params = {}
-
-    params.each { |k, v| ok_params[k.upcase] = v }
-
-    %i[request version transparency service srs width height bbox format srs].each do |key|
-      ows.setParameter(key.to_s, ok_params[key.to_s.upcase]) unless ok_params[key.to_s.upcase].nil?
+    # Skip caching for GetCapabilities requests
+    if params['REQUEST'] == 'GetCapabilities' || params['request'] == 'GetCapabilities'
+      render_layer_wms_response
+      return
     end
 
-    ows.setParameter('VeRsIoN', '1.1.1')
-    ows.setParameter('STYLES', '')
-    ows.setParameter('LAYERS', 'image')
-    # ows.setParameter("COVERAGE", "image")
+    # Generate cache key from relevant params
+    cache_key = layer_wms_cache_key(@layer.id, params)
 
-    map = Mapscript::MapObj.new(Rails.root.join('lib/mapserver/wms.map').to_s)
-    projfile = Rails.root.join('lib/proj').to_s
-    map.setConfigOption('PROJ_LIB', projfile)
-    # map.setProjection("init=epsg:900913")
-    map.applyConfigOptions
+    # Use low-level caching
+    cached_response = Rails.cache.fetch(cache_key, expires_in: 1.hour) do
+      generate_layer_wms_response
+    end
 
-    # logger.info map.getProjection
-    map.setMetaData('wms_onlineresource',
-                    'http://' + request.host_with_port + "/layers/wms/#{@layer.id}")
-
-    raster = Mapscript::LayerObj.new(map)
-    raster.name = 'image'
-    raster.type = Mapscript::MS_LAYER_RASTER
-    raster.addProcessing('RESAMPLE=BILINEAR')
-    raster.tileindex = @layer.tileindex_path
-    raster.tileitem = 'Location'
-
-    raster.status = Mapscript::MS_ON
-    # raster.setProjection( "+init=" + str(epsg).lower() )
-    raster.dump = Mapscript::MS_TRUE
-
-    # raster.setProjection('init=epsg:4326')
-    raster.metadata.set('wcs_formats', 'GEOTIFF')
-    raster.metadata.set('wms_title', @layer.name)
-    raster.metadata.set('wms_srs', 'EPSG:4326 EPSG:3857 EPSG:4269 EPSG:900913')
-    raster.debug = Mapscript::MS_TRUE
-
-    Mapscript.msIO_installStdoutToBuffer
-    map.OWSDispatch(ows)
-    content_type = Mapscript.msIO_stripStdoutBufferContentType || 'text/plain'
-    result_data = Mapscript.msIO_getStdoutBufferBytes
-
-    send_data result_data, type: content_type, disposition: 'inline'
-    Mapscript.msIO_resetHandlers
+    send_data cached_response[:data], type: cached_response[:content_type], disposition: 'inline'
   rescue RuntimeError => e
     @e = e
     render layout: 'application'
@@ -692,6 +649,64 @@ class LayersController < ApplicationController
   end
 
   private
+
+  def layer_wms_cache_key(layer_id, request_params)
+    cache_params = request_params.slice(:REQUEST, :request, :VERSION, :version, :BBOX, :bbox,
+                                        :WIDTH, :width, :HEIGHT, :height, :FORMAT, :format,
+                                        :SRS, :srs, :TRANSPARENCY, :transparency)
+    "wms/layer/#{layer_id}/#{Digest::SHA1.hexdigest(cache_params.to_s)}"
+  end
+
+  def generate_layer_wms_response
+    ows = Mapscript::OWSRequest.new
+
+    ok_params = {}
+    params.each { |k, v| ok_params[k.upcase] = v }
+
+    %i[request version transparency service srs width height bbox format srs].each do |key|
+      ows.setParameter(key.to_s, ok_params[key.to_s.upcase]) unless ok_params[key.to_s.upcase].nil?
+    end
+
+    ows.setParameter('VeRsIoN', '1.1.1')
+    ows.setParameter('STYLES', '')
+    ows.setParameter('LAYERS', 'image')
+
+    map = Mapscript::MapObj.new(Rails.root.join('lib/mapserver/wms.map').to_s)
+    projfile = Rails.root.join('lib/proj').to_s
+    map.setConfigOption('PROJ_LIB', projfile)
+    map.applyConfigOptions
+
+    map.setMetaData('wms_onlineresource',
+                    'http://' + request.host_with_port + "/layers/wms/#{@layer.id}")
+
+    raster = Mapscript::LayerObj.new(map)
+    raster.name = 'image'
+    raster.type = Mapscript::MS_LAYER_RASTER
+    raster.addProcessing('RESAMPLE=BILINEAR')
+    raster.tileindex = @layer.tileindex_path
+    raster.tileitem = 'Location'
+
+    raster.status = Mapscript::MS_ON
+    raster.dump = Mapscript::MS_TRUE
+
+    raster.metadata.set('wcs_formats', 'GEOTIFF')
+    raster.metadata.set('wms_title', @layer.name)
+    raster.metadata.set('wms_srs', 'EPSG:4326 EPSG:3857 EPSG:4269 EPSG:900913')
+    raster.debug = Mapscript::MS_TRUE
+
+    Mapscript.msIO_installStdoutToBuffer
+    map.OWSDispatch(ows)
+    content_type = Mapscript.msIO_stripStdoutBufferContentType || 'text/plain'
+    result_data = Mapscript.msIO_getStdoutBufferBytes
+    Mapscript.msIO_resetHandlers
+
+    { data: result_data, content_type: content_type }
+  end
+
+  def render_layer_wms_response
+    response = generate_layer_wms_response
+    send_data response[:data], type: response[:content_type], disposition: 'inline'
+  end
 
   def check_if_layer_is_editable
     if current_user.present? and (current_user.own_this_layer?(params[:id]) or current_user.has_role?('editor'))

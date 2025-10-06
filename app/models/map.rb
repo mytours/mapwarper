@@ -38,7 +38,7 @@ class Map < ActiveRecord::Base
   validate :unique_filename, on: :create
 
   acts_as_taggable
-  # acts_as_commentable
+  acts_as_commentable
   acts_as_enum :map_type, %i[index is_map not_map]
   acts_as_enum :status, %i[unloaded loading available warping warped published]
   acts_as_enum :mask_status, %i[unmasked masking masked]
