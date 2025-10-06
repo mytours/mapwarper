@@ -11,15 +11,16 @@
     <%= javascript_tag "jQuery.noConflict();" -%>
 
     <script type="text/javascript">
-      var addthis_share  = {
-          media: "<%=@map.upload.url(:thumb)%>",
-          passthrough : {
-            twitter: {
-              via: "<%=APP_CONFIG['addthis_twitter_user']%>"
-            }
-          }
-        }
-      var addthis_config = {ui_click: true};
+      // Removed AddThis social sharing widget
+      // var addthis_share  = {
+      //     media: "<%#=@map.upload.url(:thumb)%>",
+      //     passthrough : {
+      //       twitter: {
+      //         via: "<%#=APP_CONFIG['addthis_twitter_user']%>"
+      //       }
+      //     }
+      //   }
+      // var addthis_config = {ui_click: true};
 
 
       jQuery(function() {
