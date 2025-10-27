@@ -4,7 +4,7 @@ class CreateGroupsMaps < ActiveRecord::Migration
       t.references :group, :map
       t.timestamps
     end
-    add_index :groups_maps, [:map_id, :group_id], :unique =>true
+    add_index :groups_maps, %i[map_id group_id], unique: true
     add_index :groups_maps, :map_id
   end
 

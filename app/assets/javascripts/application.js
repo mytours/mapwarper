@@ -12,7 +12,7 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require jquery.ui.all
+//= require jquery-ui
 
 //= require general
 //= require jquery.history
@@ -25,5 +25,4 @@
 //= require jquery.nouislider.all.min
 //= require cookies_helper
 
-var querystring = require('querystring-component');
-
+var querystring = require("querystring-component");

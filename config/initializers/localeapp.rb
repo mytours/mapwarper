@@ -1,7 +1,7 @@
-#if defined?(Rails) && Rails.env.development?
+# if defined?(Rails) && Rails.env.development?
 #    require 'localeapp/rails'
 #
-#    if defined? APP_CONFIG['localeapp_api_key'] 
+#    if defined? APP_CONFIG['localeapp_api_key']
 #      key = APP_CONFIG['localeapp_api_key']
 #    else
 #      key = ENV['LOCALEAPP_API_KEY']
@@ -13,4 +13,4 @@
 #      config.polling_environments = []
 #      config.api_key = key
 #    end
-#end
+# end

@@ -64,8 +64,6 @@
 # 2005-03-26: Version 1.0.0
 #
 module SortHelper
-
-
   # Initializes the default sort column (default_key) with the following
   # options:
   #
@@ -76,13 +74,12 @@ module SortHelper
   # - :icons_dir -- directory with sort direction icons. Defaults to
   #   /images
   #
-  def sort_init(default_key, options={})
-    options = { :default_order => 'asc',
-                :name => params[:controller] + '_sort',
-                :icons_dir => '/assets',
-              }.merge(options)
+  def sort_init(default_key, options = {})
+    options = { default_order: 'asc',
+                name: params[:controller] + '_sort',
+                icons_dir: '/assets' }.merge(options)
     @sort_name = options[:name]
-    @sort_default = {:key => default_key, :order => options[:default_order]}
+    @sort_default = { key: default_key, order: options[:default_order] }
     @icons_dir = options[:icons_dir]
     session[@sort_name] = @sort_default
   end
@@ -90,23 +87,23 @@ module SortHelper
   # Updates the sort state. Call this in the controller prior to calling
   # sort_clause.
   #
-  def sort_update()
-    if params[:sort_key] && params[:sort_order]
-      sort = {:key => params[:sort_key], :order => params[:sort_order]}
-    elsif session[@sort_name]
-      sort = session[@sort_name]   # Previous sort.
-    else
-      sort = @sort_default
-    end
+  def sort_update
+    sort = if params[:sort_key] && params[:sort_order]
+             { key: params[:sort_key], order: params[:sort_order] }
+           elsif session[@sort_name]
+             session[@sort_name] # Previous sort.
+           else
+             @sort_default
+           end
     session[@sort_name] = sort
   end
 
   # Returns an SQL sort clause corresponding to the current sort state.
   # Use this to sort the controller's table items collection.
   #
-  def sort_clause()
+  def sort_clause
     result = session[@sort_name][:key] + ' ' + session[@sort_name][:order]
-    result if result =~ /^[\w_]+ (asc|desc)$/i  # Validate sort.
+    result if result =~ /^[\w_]+ (asc|desc)$/i # Validate sort.
   end
 
   # Returns a link which sorts by the named column.
@@ -115,25 +112,29 @@ module SortHelper
   # - The optional text explicitly specifies the displayed link text.
   # - A sort icon image is positioned to the right of the sort link.
   #
-  def sort_link(column, text=nil, options=nil)
-    key, order = session[@sort_name][:key], session[@sort_name][:order]
+  def sort_link(column, text = nil, options = nil)
+    key = session[@sort_name][:key]
+    order = session[@sort_name][:order]
     if key == column
       if order.downcase == 'asc'
-        icon, order = 'sort_asc.gif', 'desc'
+        icon = 'sort_asc.gif'
+        order = 'desc'
       else
-        icon, order = 'sort_desc.gif', 'asc'
+        icon = 'sort_desc.gif'
+        order = 'asc'
       end
     else
-      icon, order = nil, 'asc'
+      icon = nil
+      order = 'asc'
     end
-    text = Inflector::titleize(column) unless text
-   
-    params = {:params => {:sort_key => column, :sort_order => order, :query => @query, :field => @field, 
-                          :show_available => @show_available, :per_page => @per_page, :period=> @period, 
-                          :from => @from, :to => @to, :show_warped => @show_warped} } #if @query
+    text ||= Inflector.titleize(column)
+
+    params = { params: { sort_key: column, sort_order: order, query: @query, field: @field,
+                         show_available: @show_available, per_page: @per_page, period: @period,
+                         from: @from, to: @to, show_warped: @show_warped } } # if @query
     params = params.merge(options[:params]) if options[:params]
     link_to(text, params) +
-      (icon ? nbsp(2) + image_tag(icon) : '').html_safe()
+      (icon ? nbsp(2) + image_tag(icon) : '').html_safe
   end
 
   # Returns a table header <th> tag with a sort link for the named column
@@ -157,17 +158,16 @@ module SortHelper
   #   </th>
   #
   def sort_header_tag(column, options = {})
-    text = options.delete(:text) || ActiveSupport::Inflector::titleize(column.humanize)
-    options[:title]= "Sort by #{text}" unless options[:title]
-    text = options[:title] || options.delete(:text) || ActiveSupport::Inflector::titleize(column.humanize)
+    text = options.delete(:text) || ActiveSupport::Inflector.titleize(column.humanize)
+    options[:title] = "Sort by #{text}" unless options[:title]
+    text = options[:title] || options.delete(:text) || ActiveSupport::Inflector.titleize(column.humanize)
     content_tag('th', sort_link(column, text.html_safe, options), options)
   end
 
   private
 
-    # Return n non-breaking spaces.
-    def nbsp(n)
-      '&nbsp;' * n
-    end
-
+  # Return n non-breaking spaces.
+  def nbsp(n)
+    '&nbsp;' * n
+  end
 end

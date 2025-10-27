@@ -8,10 +8,9 @@ set :deploy_to, '/srv/dev.mapwarper.net/app/'
 # is considered to be the first unless any hosts have the primary
 # property set.  Don't declare `role :all`, it's a meta role.
 
-role :app, %w{tim@dev.mapwarper.net}
-role :web, %w{tim@dev.mapwarper.net}
-role :db,  %w{tim@dev.mapwarper.net}
-
+role :app, %w[tim@dev.mapwarper.net]
+role :web, %w[tim@dev.mapwarper.net]
+role :db,  %w[tim@dev.mapwarper.net]
 
 # Extended Server Syntax
 # ======================
@@ -19,8 +18,7 @@ role :db,  %w{tim@dev.mapwarper.net}
 # server list. The second argument is a, or duck-types, Hash and is
 # used to set extended properties on the server.
 
-server 'dev.mapwarper.net', user: 'tim', roles: %w{web app db}
-
+server 'dev.mapwarper.net', user: 'tim', roles: %w[web app db]
 
 # Custom SSH Options
 # ==================
@@ -35,7 +33,7 @@ server 'dev.mapwarper.net', user: 'tim', roles: %w{web app db}
 #    auth_methods: %w(password)
 #  }
 
-set :ssh_options, { :forward_agent => true }
+set :ssh_options, { forward_agent: true }
 
 # And/or per server (overrides global)
 # ------------------------------------
@@ -49,4 +47,3 @@ set :ssh_options, { :forward_agent => true }
 #     auth_methods: %w(publickey password)
 #     # password: 'please use keys'
 #   }
-

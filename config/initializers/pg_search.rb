@@ -1,5 +1,5 @@
 PgSearch.multisearch_options = {
-  :using => {
-    :tsearch => {:prefix => true}
+  using: {
+    tsearch: { prefix: true }
   }
 }

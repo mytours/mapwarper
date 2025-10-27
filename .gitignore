@@ -13,6 +13,7 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*.log
+/log/*.log.*
 /log/localeapp.yml
 /log/imports/*.log
 /tmp
@@ -49,6 +50,16 @@ vendor/bundle
 
 #test files
 test/test_files/*
+test/fixtures/data/dst/*
+!test/fixtures/data/dst/.keep
+
+# General environment files
+.env
 
 # docker env files
 .env.postgres
+vendor/bundle
+.bundle
+config/database.yml
+config/secrets.yml
+config/application.yml

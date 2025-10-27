@@ -1,0 +1,11 @@
+//= link_tree ../images
+//= link_tree ../../../vendor/assets/images/openlayers
+//= link_directory ../javascripts .js
+//= link_directory ../stylesheets .css
+//= link application.css
+//= link application.js
+//= link openlayers/2.8/OpenLayers-2.8/OpenLayers.js
+//= link select2/select2.min.js
+//= link select2/select2.min.css
+//= link_tree ../../../vendor/assets/javascripts/select2/i18n
+//= link helmerttransform.js

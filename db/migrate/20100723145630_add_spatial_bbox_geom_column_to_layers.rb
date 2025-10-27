@@ -1,7 +1,7 @@
 class AddSpatialBboxGeomColumnToLayers < ActiveRecord::Migration
- def self.up
+  def self.up
     add_column :layers, :bbox_geom, :st_polygon
-    add_index :layers, :bbox_geom, :using => :gist
+    add_index :layers, :bbox_geom, using: :gist
   end
 
   def self.down

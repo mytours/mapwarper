@@ -2,8 +2,8 @@
 
 # Add new mime types for use in respond_to blocks:
 # Mime::Type.register "text/richtext", :rtf
-Mime::Type.register "application/vnd.google-earth.kml+xml", :kml
-#Mime::Type.register "image/png", :png
-Mime::Type.register "application/xml", :aux_xml
-Mime::Type.register "image/tiff", :tif
-Mime::Type.register "application/vnd.geo+json", :geojson
+Mime::Type.register 'application/vnd.google-earth.kml+xml', :kml
+# Mime::Type.register "image/png", :png
+Mime::Type.register 'application/xml', :aux_xml
+Mime::Type.register 'image/tiff', :tif
+Mime::Type.register 'application/vnd.geo+json', :geojson

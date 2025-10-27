@@ -1,6 +1,6 @@
 class RolesController < ApplicationController
   layout 'application'
-  before_filter :check_super_user_role
+  before_action :check_super_user_role
 
   def index
     @user = User.find(params[:user_id])
@@ -10,10 +10,8 @@ class RolesController < ApplicationController
   def update
     @user = User.find(params[:user_id])
     @role = Role.find(params[:id])
-    unless @user.has_role?(@role.name)
-      @user.roles << @role
-    end
-    redirect_to :action => 'index'
+    @user.roles << @role unless @user.has_role?(@role.name)
+    redirect_to action: 'index'
   end
 
   def destroy
@@ -21,11 +19,9 @@ class RolesController < ApplicationController
     @role = Role.find(params[:id])
     if @user.has_role?(@role.name)
       @user.roles.delete(@role)
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
     else
-      redirect_to :action => 'index'
+      redirect_to action: 'index'
     end
-
   end
-
 end

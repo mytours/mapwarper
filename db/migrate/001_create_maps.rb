@@ -9,8 +9,6 @@ class CreateMaps < ActiveRecord::Migration
       t.integer :status
       t.integer :mask_status
 
-        
-
       t.timestamps
     end
   end

@@ -1,11 +1,11 @@
-FactoryGirl.define do
+# frozen_string_literal: true
 
-  factory :admin_role, :class => Role do
-    name :administrator
+FactoryBot.define do
+  factory :admin_role, class: 'Role' do
+    name { :administrator }
   end
-  
-  factory :editor_role, :class => Role do
-    name :editor
+
+  factory :editor_role, class: 'Role' do
+    name { :editor }
   end
-  
 end

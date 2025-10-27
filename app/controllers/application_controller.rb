@@ -3,26 +3,25 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  before_filter :configure_permitted_parameters, if: :devise_controller?
+  before_action :configure_permitted_parameters, if: :devise_controller?
 
-  before_filter :set_locale
-    
+  before_action :set_locale
+
   def check_super_user_role
     check_role('super user')
   end
 
   def check_administrator_role
-    check_role("administrator")
+    check_role('administrator')
   end
-  
+
   def check_editor_role
-    check_role("editor")
+    check_role('editor')
   end
 
   def check_developer_role
-    check_role("developer")
+    check_role('developer')
   end
-
 
   protected
 
@@ -35,8 +34,8 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  def default_url_options(options={})
-    I18n.locale == I18n.default_locale ? {} : { :locale => I18n.locale }
+  def default_url_options(_options = {})
+    I18n.locale == I18n.default_locale ? {} : { locale: I18n.locale }
   end
 
   def set_locale
@@ -44,17 +43,15 @@ class ApplicationController < ActionController::Base
   rescue I18n::InvalidLocale
     I18n.locale = I18n.default_locale
   end
-  
+
   def check_role(role)
-    unless user_signed_in? && @current_user.has_role?(role)
-      permission_denied
-    end
+    return if current_user.present? && @current_user.has_role?(role)
+
+    permission_denied
   end
 
   def permission_denied
     flash[:error] = t('application.permission_denied')
     redirect_to root_path
   end
-
-
 end

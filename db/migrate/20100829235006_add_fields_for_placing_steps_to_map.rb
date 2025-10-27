@@ -1,10 +1,10 @@
 class AddFieldsForPlacingStepsToMap < ActiveRecord::Migration
   def self.up
-    add_column :maps, :rough_lat, :decimal, :precision => 15, :scale => 10
-    add_column :maps,  :rough_lon, :decimal, :precision => 15, :scale => 10
-    
+    add_column :maps, :rough_lat, :decimal, precision: 15, scale: 10
+    add_column :maps, :rough_lon, :decimal, precision: 15, scale: 10
+
     add_column :maps, :rough_centroid, :st_point
-    add_index :maps, :rough_centroid, :using => :gist
+    add_index :maps, :rough_centroid, using: :gist
 
     add_column :maps, :rough_zoom, :integer
     add_column :maps, :rough_state, :integer
@@ -16,10 +16,8 @@ class AddFieldsForPlacingStepsToMap < ActiveRecord::Migration
 
     remove_index :maps, :rough_centroid
     remove_column :maps, :rough_centroid
-   
 
     remove_column :maps, :rough_zoom
     remove_column :maps, :rough_state
-
   end
 end
